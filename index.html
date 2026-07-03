@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Unravel, a safe place to untangle your thoughts</title>
+<meta name="description" content="Unravel is an AI companion for reflection. No login, no judgment, just somewhere private to untangle your thoughts.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,400;0,500;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<div class="breath-bg" aria-hidden="true">
+  <span class="orb orb-a"></span>
+  <span class="orb orb-b"></span>
+  <span class="orb orb-c"></span>
+</div>
+
+<header class="site-header">
+  <button class="brand" id="btn-home" aria-label="Unravel, return to start">
+    <span class="brand-mark" aria-hidden="true"></span>
+    Unravel
+  </button>
+  <span class="privacy-pill" title="Nothing you write here is sent anywhere unless you choose to save it.">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 2l7 3v6c0 5-3.4 8.4-7 11-3.6-2.6-7-6-7-11V5l7-3z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
+    Private by default
+  </span>
+</header>
+
+<main id="app">
+
+  <!-- SCREEN: Landing / intro -->
+  <section class="screen active" id="screen-landing" data-screen>
+    <div class="wrap wrap-narrow center">
+      <p class="eyebrow">no login · no account · no distractions</p>
+      <h1 class="display">Where is your head at today?</h1>
+      <p class="lede">Whatever you're carrying today, you're welcome to leave it here. No judgment. No pressure. Just a private space to slow down, untangle your thoughts, and take one small step toward feeling lighter.</p>
+
+      <button class="btn btn-primary btn-lg" id="btn-begin">Begin</button>
+
+      <p class="fineprint disclosure">Unravel is an AI companion for reflection, not a therapist, and not a substitute for professional care.</p>
+    </div>
+  </section>
+
+  <!-- SCREEN: Emotion Compass -->
+  <section class="screen" id="screen-compass" data-screen>
+    <div class="wrap wrap-narrow center">
+      <button class="back-link" data-back="screen-landing">← back</button>
+      <p class="eyebrow">the emotion compass</p>
+      <h2 class="display-sm">Which feeling is closest to what you're experiencing?</h2>
+
+      <div class="emotion-grid" id="emotion-grid" role="group" aria-label="Choose the emotion closest to how you feel">
+        <!-- injected by JS -->
+      </div>
+
+      <div class="other-input hidden" id="emotion-other-wrap">
+        <input type="text" id="emotion-other-input" placeholder="Say a little more, if you'd like…" maxlength="80">
+        <button class="btn btn-primary" id="emotion-other-submit">Continue</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- SCREEN: Drill down (heaviest) -->
+  <section class="screen" id="screen-heaviest" data-screen>
+    <div class="wrap wrap-narrow center">
+      <button class="back-link" data-back="screen-compass">← back</button>
+      <p class="eyebrow" id="heaviest-eyebrow">you're feeling</p>
+      <h2 class="display-sm">What feels the heaviest?</h2>
+
+      <div class="choice-grid" id="heaviest-grid" role="group" aria-label="What feels heaviest">
+        <!-- injected by JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- SCREEN: Transition (breathing pause) -->
+  <section class="screen" id="screen-transition" data-screen>
+    <div class="wrap wrap-narrow center transition-stage">
+      <span class="breathing-circle" aria-hidden="true"></span>
+      <p class="transition-text">Take your time.</p>
+      <button class="link-btn" id="btn-skip-transition">Continue whenever you're ready</button>
+    </div>
+  </section>
+
+  <!-- SCREEN: The Safe Room -->
+  <section class="screen" id="screen-saferoom" data-screen>
+    <div class="wrap wrap-narrow">
+      <button class="back-link" data-back="screen-heaviest">← back</button>
+      <div class="center">
+        <p class="eyebrow">the safe room</p>
+        <h2 class="display-sm">This room is yours.</h2>
+        <p class="lede lede-sm">Write exactly what you're thinking. It doesn't need to sound right. It doesn't need to be positive. Nobody is grading you. Nobody is judging you.</p>
+      </div>
+
+      <div class="input-modes" role="group" aria-label="Input method">
+        <button class="mode-btn" data-mode="voice">🎤 Voice <span class="soon">soon</span></button>
+        <button class="mode-btn active" data-mode="type">⌨️ Type</button>
+        <button class="mode-btn" data-mode="draw">✏️ Draw <span class="soon">soon</span></button>
+        <button class="mode-btn" data-mode="letter">📄 Write a letter</button>
+      </div>
+
+      <textarea id="journal-input" class="journal-box" placeholder="Start with one word if that's all you have today." rows="9"></textarea>
+
+      <div class="prompt-row">
+        <button class="link-btn" id="btn-prompt-help">I don't know where to start</button>
+        <span class="prompt-suggestion hidden" id="prompt-suggestion"></span>
+      </div>
+
+      <div class="saferoom-footer">
+        <span class="word-count" id="word-count">0 words</span>
+        <button class="btn btn-primary btn-lg" id="btn-to-weight" disabled>Continue</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- SCREEN: Emotional Weight (after writing, skippable) -->
+  <section class="screen" id="screen-weight" data-screen>
+    <div class="wrap wrap-narrow center">
+      <p class="eyebrow">now that you've said it</p>
+      <h2 class="display-sm">How heavy does this feel right now?</h2>
+      <p class="lede lede-sm">Only if you'd like to. This is just for you.</p>
+
+      <div class="weight-meter">
+        <div class="weight-labels">
+          <span>light</span>
+          <span id="weight-value">50</span>
+          <span>unbearable</span>
+        </div>
+        <input type="range" min="0" max="100" value="50" id="weight-slider" class="slider">
+      </div>
+
+      <button class="btn btn-primary btn-lg" id="btn-ready">I'm Ready</button>
+      <button class="link-btn" id="btn-skip-weight">Skip this</button>
+    </div>
+  </section>
+
+  <!-- SCREEN: Reading with care (pause, branches silently) -->
+  <section class="screen" id="screen-reading" data-screen>
+    <div class="wrap wrap-narrow center transition-stage">
+      <span class="breathing-circle breathing-circle-sm" aria-hidden="true"></span>
+      <p class="transition-text">Reading with care…</p>
+    </div>
+  </section>
+
+  <!-- SCREEN: Safety Pause -->
+  <section class="screen" id="screen-safety-pause" data-screen>
+    <div class="wrap wrap-narrow center">
+      <div class="crisis-card">
+        <p class="eyebrow">before anything else</p>
+        <h2 class="display-sm">It sounds like you might be carrying something really heavy right now.</h2>
+        <p class="lede lede-sm">We noticed some words that suggest you could be in serious pain, or thinking about harming yourself or someone else. That matters, and you don't have to carry it alone. Reaching out to a real person right now, someone trained to help, can make a genuine difference. Unravel is a companion for reflection, not a crisis service, so this moment deserves more than we can offer.</p>
+
+        <div class="crisis-resources">
+          <div class="crisis-item">
+            <strong>US &amp; Canada</strong>
+            <span>Call or text <b>988</b>: Suicide &amp; Crisis Lifeline</span>
+          </div>
+          <div class="crisis-item">
+            <strong>Text support</strong>
+            <span>Text <b>HOME</b> to <b>741741</b>: Crisis Text Line</span>
+          </div>
+          <div class="crisis-item">
+            <strong>UK &amp; ROI</strong>
+            <span>Call <b>116 123</b>: Samaritans</span>
+          </div>
+          <div class="crisis-item">
+            <strong>Elsewhere</strong>
+            <span>findahelpline.com has a list by country</span>
+          </div>
+          <div class="crisis-item">
+            <strong>Immediate danger</strong>
+            <span>Please contact local emergency services</span>
+          </div>
+          <div class="crisis-item">
+            <strong>Someone else at risk</strong>
+            <span>Please contact local emergency services now</span>
+          </div>
+        </div>
+
+        <p class="lede lede-sm">Because of what you wrote, we're not showing the usual reflection right now, and letting go of this entry isn't offered in this moment either. You're welcome to save it privately to revisit later, or simply leave. Nothing here will stop you from closing this tab or reaching out for real help.</p>
+
+        <div class="crisis-actions">
+          <button class="btn btn-primary btn-lg" id="btn-safety-save">Save this entry to revisit later</button>
+          <button class="btn btn-ghost" id="btn-safety-leave">Leave for now</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SCREEN: AI Reflection + Emotional Mirror -->
+  <section class="screen" id="screen-reflection" data-screen>
+    <div class="wrap wrap-narrow center">
+      <p class="eyebrow">reflecting together</p>
+      <h2 class="display-sm">Here's what we're noticing together.</h2>
+      <p class="reflection-text" id="reflection-text"></p>
+
+      <div class="mirror-card">
+        <p class="mirror-label">✨ Emotional Mirror</p>
+        <div class="mirror-diagram" id="mirror-diagram"><!-- injected by JS --></div>
+        <div class="mirror-insight">
+          <p class="mirror-insight-label">What might be happening</p>
+          <p id="mirror-insight-text"></p>
+        </div>
+      </div>
+
+      <button class="btn btn-primary btn-lg" id="btn-to-burnkeep">Continue</button>
+    </div>
+  </section>
+
+  <!-- SCREEN: Burn or Keep -->
+  <section class="screen" id="screen-burn-keep" data-screen>
+    <div class="wrap wrap-narrow center">
+      <p class="eyebrow">your words, your choice</p>
+      <h2 class="display-sm">What would you like to do with these thoughts?</h2>
+
+      <div class="save-choice-grid">
+        <button class="save-choice-card" id="btn-burn-start">
+          <span class="save-choice-icon">🔥</span>
+          <span class="save-choice-title">Let them go</span>
+          <span class="save-choice-desc">Your words will disappear forever. Nothing will be saved. Sometimes healing begins by releasing what's been weighing you down.</span>
+        </button>
+        <button class="save-choice-card" id="btn-keep-start">
+          <span class="save-choice-icon">📖</span>
+          <span class="save-choice-title">Keep it</span>
+          <span class="save-choice-desc">Save this entry to your private journal so you can revisit it whenever you choose.</span>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- SCREEN: Burn countdown -->
+  <section class="screen" id="screen-burn-countdown" data-screen>
+    <div class="wrap wrap-narrow center">
+      <p class="eyebrow">letting go</p>
+      <h2 class="display-sm">Burning in <span id="countdown-number">5</span>…</h2>
+      <p class="lede lede-sm">Burning removes this entry from this device. It doesn't undo any support resources that were already shown to you.</p>
+      <button class="btn btn-ghost" id="btn-cancel-burn">Tap to cancel</button>
+    </div>
+  </section>
+
+  <!-- SCREEN: Burn animation -->
+  <section class="screen" id="screen-burn" data-screen>
+    <div class="wrap wrap-narrow center">
+      <p class="eyebrow">letting go</p>
+      <div class="burn-stage" id="burn-stage">
+        <div class="flames" id="burn-flames"></div>
+        <div class="burn-text" id="burn-text"></div>
+      </div>
+      <p class="lede lede-sm burn-caption" id="burn-caption">Some thoughts are meant to stay in the past.</p>
+    </div>
+  </section>
+
+  <!-- SCREEN: Keep confirmation -->
+  <section class="screen" id="screen-keep-saved" data-screen>
+    <div class="wrap wrap-narrow center">
+      <p class="eyebrow">saved</p>
+      <h2 class="display-sm">You've added another page to your journey.</h2>
+
+      <div class="privacy-note-card">
+        <p class="privacy-note-headline">Private. Encrypted.</p>
+        <button class="link-btn" id="btn-privacy-toggle">What does that actually mean?</button>
+        <div class="privacy-note-detail hidden" id="privacy-note-detail">
+          <p>This entry is stored only on this device's local browser storage. It is never uploaded to a server, and we don't collect it in any form, aggregated or otherwise, to improve Unravel.</p>
+          <p>Nobody else can see it. There is no support or safety-review access to your entries, because we never receive them in the first place. The only exception is the on-device safety check that already ran on this entry before you got here.</p>
+          <p>If you clear your browser data or switch devices, this entry won't come with you. That's the trade-off of it never leaving your device.</p>
+        </div>
+      </div>
+
+      <button class="btn btn-primary btn-lg" id="btn-future-you">Would you like to hear from your future self?</button>
+      <button class="link-btn" id="btn-skip-future">Not right now</button>
+    </div>
+  </section>
+
+  <!-- SCREEN: Future You letter -->
+  <section class="screen" id="screen-future-letter" data-screen>
+    <div class="wrap wrap-narrow center">
+      <p class="eyebrow">a letter from your future self</p>
+      <div class="letter-card">
+        <p id="future-letter-text" class="letter-text"></p>
+      </div>
+      <button class="btn btn-primary btn-lg" id="btn-from-letter">Continue</button>
+    </div>
+  </section>
+
+  <!-- SCREEN: Tiny Step -->
+  <section class="screen" id="screen-tiny-step" data-screen>
+    <div class="wrap wrap-narrow center">
+      <p class="eyebrow">one small thing for today</p>
+      <h2 class="display-sm" id="tiny-step-text">Drink a glass of water.</h2>
+      <button class="btn btn-primary btn-lg" id="btn-to-hope">Continue</button>
+    </div>
+  </section>
+
+  <!-- SCREEN: Hope Library / closing -->
+  <section class="screen" id="screen-hope" data-screen>
+    <div class="wrap wrap-narrow center">
+      <p class="eyebrow">before you go</p>
+      <blockquote class="hope-quote" id="hope-quote">You survived every difficult day that brought you here.</blockquote>
+      <button class="btn btn-primary btn-lg" id="btn-to-goodbye">Continue</button>
+    </div>
+  </section>
+
+  <!-- SCREEN: Goodbye -->
+  <section class="screen" id="screen-goodbye" data-screen>
+    <div class="wrap wrap-narrow center">
+      <p class="eyebrow" id="goodbye-eyebrow">until next time</p>
+      <h2 class="display-sm" id="goodbye-headline">Thank you for trusting Unravel today.</h2>
+      <p class="lede lede-sm">You arrived carrying something heavy. We hope you leave carrying a little less.</p>
+
+      <div class="closing-actions">
+        <button class="btn btn-primary btn-lg" id="btn-restart">Until next time.</button>
+      </div>
+      <div class="closing-links">
+        <button class="link-btn" id="btn-goto-dashboard">View my journey</button>
+        <button class="link-btn" id="btn-goto-resources">See support resources</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- SCREEN: My Journey Dashboard -->
+  <section class="screen" id="screen-dashboard" data-screen>
+    <div class="wrap wrap-narrow">
+      <button class="back-link" data-back="screen-goodbye">← back</button>
+      <div class="center">
+        <p class="eyebrow">private · no streaks · no guilt</p>
+        <h2 class="display-sm">My Journey</h2>
+        <p class="lede lede-sm">Built only from entries you've chosen to keep on this device. Nothing here is shared or analyzed anywhere else.</p>
+      </div>
+
+      <div class="dashboard-grid" id="dashboard-grid">
+        <!-- injected by JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- SCREEN: Resource Center -->
+  <section class="screen" id="screen-resources" data-screen>
+    <div class="wrap wrap-narrow center">
+      <button class="back-link" data-back="screen-goodbye">← back</button>
+      <p class="eyebrow">resource center</p>
+      <h2 class="display-sm">Support that goes beyond this room</h2>
+
+      <div class="resource-grid">
+        <div class="resource-card">
+          <h3>Talk to someone now</h3>
+          <p>988 (US) · 116 123 (UK/ROI) · findahelpline.com for other countries</p>
+        </div>
+        <div class="resource-card">
+          <h3>Find a therapist</h3>
+          <p>Psychology Today directory, Open Path Collective (low-cost), BetterHelp</p>
+        </div>
+        <div class="resource-card">
+          <h3>Support groups</h3>
+          <p>NAMI Support Groups, 7 Cups, local community mental health centers</p>
+        </div>
+        <div class="resource-card">
+          <h3>Guided exercises</h3>
+          <p>Grounding, breathing, and body-scan techniques from trusted sources</p>
+        </div>
+        <div class="resource-card">
+          <h3>Books &amp; articles</h3>
+          <p>Curated reading on anxiety, grief, burnout, and everyday resilience</p>
+        </div>
+        <div class="resource-card">
+          <h3>Meditation &amp; sleep</h3>
+          <p>Free guided meditation and wind-down audio from trusted sources</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <p>Unravel is an AI companion for reflection. It doesn't diagnose or treat anything, and it isn't a substitute for professional care. If you're in immediate danger, please contact local emergency services.</p>
+</footer>
+
+<script src="js/app.js"></script>
+</body>
+</html>
