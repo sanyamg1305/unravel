@@ -123,6 +123,13 @@
     state.history = idx >= 0 ? state.history.slice(0, idx + 1) : [targetId];
   }
 
+  function bumpText(el, text) {
+    el.textContent = text;
+    el.classList.remove('bump');
+    void el.offsetWidth;
+    el.classList.add('bump');
+  }
+
   function detectRisk(text) {
     const lower = text.toLowerCase();
     const selfHarm = SELF_HARM_KEYWORDS.some(k => lower.includes(k));
@@ -272,7 +279,7 @@
 
     textarea.addEventListener('input', () => {
       const words = textarea.value.trim().split(/\s+/).filter(Boolean);
-      wordCount.textContent = `${words.length} word${words.length === 1 ? '' : 's'}`;
+      bumpText(wordCount, `${words.length} word${words.length === 1 ? '' : 's'}`);
       continueBtn.disabled = words.length < 1;
     });
 
@@ -313,7 +320,7 @@
   function initWeight() {
     const slider = $('#weight-slider');
     const value = $('#weight-value');
-    slider.addEventListener('input', () => { value.textContent = slider.value; });
+    slider.addEventListener('input', () => { bumpText(value, slider.value); });
 
     $('#btn-ready').addEventListener('click', () => {
       state.weight = parseInt(slider.value, 10);
@@ -596,12 +603,15 @@ I'm not a fortune teller, just you, imagining a steadier day.`;
     if (kind === 'burned') {
       eyebrow.textContent = 'you chose to let it go';
       headline.textContent = 'Some thoughts are meant to stay in the past.';
+      spawnGoodbyeParticles(24);
     } else if (kind === 'left') {
       eyebrow.textContent = 'take care of yourself';
       headline.textContent = "It's okay to step away.";
+      spawnGoodbyeParticles(8);
     } else {
       eyebrow.textContent = 'until next time';
       headline.textContent = "You've added another page to your journey.";
+      spawnGoodbyeParticles(14);
     }
   }
 
@@ -810,6 +820,53 @@ I'm not a fortune teller, just you, imagining a steadier day.`;
     observer.observe(target, { attributes: true, attributeFilter: ['class'] });
   }
 
+  /* ============ Ambient motion: ripples + twinkles + goodbye particles ============ */
+
+  const RIPPLE_SELECTOR = '.btn, .emotion-card, .choice-chip, .save-choice-card, .mode-btn, .dashboard-card, .resource-card, .stone, .link-btn';
+
+  function initRipples() {
+    document.addEventListener('click', (e) => {
+      const target = e.target.closest(RIPPLE_SELECTOR);
+      if (!target) return;
+      const rect = target.getBoundingClientRect();
+      const size = Math.max(rect.width, rect.height) * 1.6;
+      const ripple = document.createElement('span');
+      ripple.className = 'ripple';
+      ripple.style.width = ripple.style.height = `${size}px`;
+      ripple.style.left = `${e.clientX - rect.left - size / 2}px`;
+      ripple.style.top = `${e.clientY - rect.top - size / 2}px`;
+      target.appendChild(ripple);
+      ripple.addEventListener('animationend', () => ripple.remove());
+    });
+  }
+
+  function initTwinkles() {
+    const bg = $('.breath-bg');
+    const count = 22;
+    for (let i = 0; i < count; i++) {
+      const dot = document.createElement('span');
+      dot.className = 'twinkle';
+      const size = (2 + Math.random() * 3).toFixed(1);
+      dot.style.width = dot.style.height = `${size}px`;
+      dot.style.left = `${Math.random() * 100}%`;
+      dot.style.top = `${Math.random() * 100}%`;
+      dot.style.setProperty('--tw-d', `${(2.5 + Math.random() * 3).toFixed(2)}s`);
+      dot.style.setProperty('--tw-delay', `${(Math.random() * 5).toFixed(2)}s`);
+      bg.appendChild(dot);
+    }
+  }
+
+  function spawnGoodbyeParticles(count) {
+    for (let i = 0; i < count; i++) {
+      const p = document.createElement('span');
+      p.className = 'goodbye-particle';
+      p.style.setProperty('--x', `${Math.random() * 100}%`);
+      p.style.setProperty('--d', `${(Math.random() * 1.5).toFixed(2)}s`);
+      document.body.appendChild(p);
+      p.addEventListener('animationend', () => p.remove());
+    }
+  }
+
   /* ============ Init ============ */
 
   document.addEventListener('DOMContentLoaded', () => {
@@ -828,5 +885,7 @@ I'm not a fortune teller, just you, imagining a steadier day.`;
     initGoodbye();
     initMisc();
     watchTransitionScreen();
+    initRipples();
+    initTwinkles();
   });
 })();
