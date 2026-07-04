@@ -4,18 +4,18 @@
   /* ============ Data ============ */
 
   const EMOTIONS = [
-    { id: 'overwhelmed', label: 'Overwhelmed', color: '#c6a9c9' },
-    { id: 'anxious',     label: 'Anxious',     color: '#7d87a8' },
-    { id: 'sad',         label: 'Sad',         color: '#8fa8c2' },
-    { id: 'angry',       label: 'Angry',       color: '#cf9a76' },
-    { id: 'lonely',      label: 'Lonely',      color: '#a89bc2' },
-    { id: 'burntout',    label: 'Burnt Out',   color: '#c2a17d' },
-    { id: 'empty',       label: 'Empty',       color: '#9b9587' },
-    { id: 'guilty',      label: 'Guilty',      color: '#b0a08f' },
-    { id: 'confused',    label: 'Confused',    color: '#8fa88f' },
-    { id: 'grieving',    label: 'Grieving',    color: '#8a94a8' },
-    { id: 'stressed',    label: 'Stressed',    color: '#cf8f8f' },
-    { id: 'other',       label: 'Other',       color: '#b5b0a3' },
+    { id: 'overwhelmed', label: 'Overwhelmed', color: '#c24dff' },
+    { id: 'anxious',     label: 'Anxious',     color: '#2f9bff' },
+    { id: 'sad',         label: 'Sad',         color: '#2ec4e0' },
+    { id: 'angry',       label: 'Angry',       color: '#ff5c5c' },
+    { id: 'lonely',      label: 'Lonely',      color: '#9b6dff' },
+    { id: 'burntout',    label: 'Burnt Out',   color: '#ff9142' },
+    { id: 'empty',       label: 'Empty',       color: '#ffc93d' },
+    { id: 'guilty',      label: 'Guilty',      color: '#ff4fa8' },
+    { id: 'confused',    label: 'Confused',    color: '#17d6a3' },
+    { id: 'grieving',    label: 'Grieving',    color: '#6c7aff' },
+    { id: 'stressed',    label: 'Stressed',    color: '#ff7a45' },
+    { id: 'other',       label: 'Other',       color: '#c9a6ff' },
   ];
 
   const HEAVIEST = [
