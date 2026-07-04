@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Living Room — Sukoon</title>
+<meta name="description" content="Anonymous, moderated stories and a guided deep-pressure exercise.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Lora:ital@0;1&family=Quicksand:wght@500;600;700&family=Nunito:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<div class="breath-bg" aria-hidden="true">
+  <span class="orb orb-a"></span>
+  <span class="orb orb-b"></span>
+  <span class="orb orb-c"></span>
+</div>
+
+<header class="site-header">
+  <a href="/" class="brand"><span class="brand-mark" aria-hidden="true"></span>Sukoon</a>
+  <div class="header-actions">
+    <button class="mini-toggle sun-moon-toggle" aria-label="Toggle night mode" aria-pressed="false">☀️</button>
+    <button class="mini-toggle sensory-toggle" aria-label="Toggle low-sensory, calmer mode" aria-pressed="false">🌿</button>
+  </div>
+</header>
+
+<main>
+  <section class="page-section">
+    <div class="wrap wrap-narrow center">
+      <p class="eyebrow">the living room</p>
+      <h1 class="display-sm">You're not the only one who feels this way.</h1>
+      <p class="lede lede-sm">Anonymous, gently moderated stories. No likes, no followers, just quiet company.</p>
+    </div>
+
+    <div class="wrap wrap-narrow hidden" id="living-room-not-connected">
+      <div class="not-connected-note">
+        The Living Room needs a Supabase project (the same one used by the Attic) to store and moderate posts. See <code>supabase/schema.sql</code> and <code>js/supabase-config.js</code>.
+      </div>
+    </div>
+
+    <div class="wrap wrap-narrow" id="heavy-blanket" style="margin-top:36px;">
+      <div class="card center">
+        <h2 class="display-sm" style="font-size:1.2rem;">The Heavy Blanket</h2>
+        <p class="lede lede-sm">A slow, weighted hum and a gentle visual, meant to feel like deep-pressure comfort.</p>
+        <div class="heavy-blanket-stage" id="blanket-stage">Just breathe here for a while.</div>
+        <button class="btn btn-primary" id="blanket-start" data-active="false">Wrap me up</button>
+      </div>
+    </div>
+
+    <div class="wrap wrap-narrow" id="shared-couch" style="margin-top:36px;">
+      <h2 class="display-sm" style="font-size:1.2rem; text-align:center;">The Shared Couch</h2>
+
+      <form class="card" id="couch-share-form" style="margin-top:16px; text-align:left;">
+        <label class="field-label" for="couch-share-text">Share something, anonymously</label>
+        <textarea class="textarea-input" id="couch-share-text" placeholder="Whatever you'd like others to know they're not alone in…" required></textarea>
+        <button class="btn btn-primary" type="submit" style="margin-top:10px;">Leave it on the couch</button>
+        <p class="fineprint" id="couch-share-status" style="margin-top:8px;"></p>
+      </form>
+
+      <div id="couch-feed" style="margin-top:20px; display:flex; flex-direction:column; gap:14px;"></div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <nav>
+    <a href="/">The Foyer</a>
+    <a href="garden.html">The Garden</a>
+    <a href="attic.html">The Attic</a>
+    <a href="living-room.html">The Living Room</a>
+    <a href="about.html">The Foundation</a>
+    <a href="crisis.html">First Aid Kit</a>
+  </nav>
+  <p>Sukoon is a caring companion, not a licensed therapist, and not a substitute for professional or emergency care. If you're in immediate danger, please contact local emergency services.</p>
+</footer>
+
+<div class="floating-controls fc-bottom-right">
+  <a href="crisis.html" class="porch-light" aria-label="Porch Light: get crisis support resources now"><span aria-hidden="true">🕯️</span><span class="label">Porch Light</span></a>
+</div>
+<div class="floating-controls fc-bottom-left">
+  <button class="quick-exit" aria-label="Slip out the back: leave this site instantly"><span aria-hidden="true">🚪</span><span class="label">Slip out the back</span></button>
+</div>
+
+<script src="js/global.js"></script>
+<script src="js/supabase-config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="js/living-room.js"></script>
+</body>
+</html>

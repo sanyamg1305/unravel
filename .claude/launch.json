@@ -2,9 +2,9 @@
   "version": "0.0.1",
   "configurations": [
     {
-      "name": "haven-static",
-      "runtimeExecutable": "npx",
-      "runtimeArgs": ["-y", "serve", "-l", "5173", "."],
+      "name": "unravel-dev",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["dev-server.js"],
       "port": 5173
     }
   ]

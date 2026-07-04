@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>First Aid Kit — Sukoon</title>
+<meta name="description" content="Immediate crisis support resources, tel links, and a breathing pacer. Loads fast on purpose.">
+<style>
+  /* Critical, inline, dependency-free styles so this page renders even if the
+     stylesheet or fonts fail to load on a poor connection. */
+  body { margin:0; background:#e3d1c3; color:#2c2a29; font-family: -apple-system, sans-serif; }
+  .crisis-hero { max-width: 640px; margin: 40px auto; padding: 30px; }
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<header class="site-header">
+  <a href="/" class="brand"><span class="brand-mark" aria-hidden="true"></span>Sukoon</a>
+</header>
+
+<main>
+  <section class="page-section" style="padding-top: 20px;">
+    <div class="wrap wrap-narrow">
+      <div class="crisis-hero">
+        <p class="eyebrow">the first aid kit</p>
+        <h1 class="display-sm">You don't have to explain anything to be here.</h1>
+        <p class="lede lede-sm">If you're in immediate danger, please call your local emergency number right now. Everything below is a real, human option, not a chatbot.</p>
+
+        <div class="pacer-static" role="img" aria-label="A slow, expanding and contracting circle, guiding you to breathe in and out"></div>
+
+        <p class="fineprint" id="region-note">Showing international and US resources by default.</p>
+
+        <div class="tel-grid" id="tel-grid">
+          <a class="tel-link" href="tel:988"><span>Call or text 988</span><small>Suicide &amp; Crisis Lifeline (US)</small></a>
+          <a class="tel-link" href="sms:741741&body=HOME"><span>Text HOME to 741741</span><small>Crisis Text Line (US/Canada)</small></a>
+          <a class="tel-link" href="tel:116123"><span>Call 116 123</span><small>Samaritans (UK &amp; ROI)</small></a>
+          <a class="tel-link" href="tel:911"><span>Call 911</span><small>Immediate danger (US)</small></a>
+        </div>
+
+        <p class="lede lede-sm">Outside these regions? <a href="https://findahelpline.com" target="_blank" rel="noopener">findahelpline.com</a> keeps an updated list by country.</p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <nav>
+    <a href="/">The Foyer</a>
+    <a href="garden.html">The Garden</a>
+    <a href="about.html">The Foundation</a>
+  </nav>
+  <p>Sukoon is a caring companion, not a licensed therapist, and not a substitute for professional or emergency care.</p>
+</footer>
+
+<script src="js/crisis.js"></script>
+</body>
+</html>
