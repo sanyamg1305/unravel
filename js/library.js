@@ -50,5 +50,57 @@ window.SUKOON_LIBRARY = {
       { title: 'The Lonely City', author: 'Olivia Laing' },
       { title: 'Solitude: A Return to the Self', author: 'Anthony Storr' }
     ]
+  },
+  compassion: {
+    title: 'Self-Compassion & Softness',
+    emoji: '🌱',
+    articles: [
+      { title: 'The power of self-warmth: why self-criticism doesn\'t motivate', url: 'https://self-compassion.org/the-three-elements-of-self-compassion/' },
+      { title: 'Forgiving your own mistakes: letting go of past expectations', url: 'https://www.psychologytoday.com/us/blog/compassion-matters' },
+      { title: 'Learning to be soft: how to drop your armor when you are safe', url: 'https://www.healthline.com/health/how-to-be-kind-to-yourself' }
+    ],
+    books: [
+      { title: 'Self-Compassion: The Proven Power of Being Kind to Yourself', author: 'Dr. Kristin Neff' },
+      { title: 'Radical Acceptance', author: 'Tara Brach' }
+    ]
+  },
+  belonging: {
+    title: 'Relationships & Belonging',
+    emoji: '🫂',
+    articles: [
+      { title: 'Safe attachments: how to build bonds that don\'t overwhelm you', url: 'https://www.psychologytoday.com/us/blog/attachment-principles' },
+      { title: 'The quiet art of listening: showing up for someone without fixing them', url: 'https://www.nytimes.com/guides/well/how-to-be-a-better-listener' },
+      { title: 'Setting boundaries gently: how to say no without losing connection', url: 'https://www.healthline.com/health/mental-health/set-boundaries' }
+    ],
+    books: [
+      { title: 'Attached: The New Science of Adult Attachment', author: 'Amir Levine and Rachel Heller' },
+      { title: 'The Art of Gathering', author: 'Priya Parker' }
+    ]
+  },
+  anger: {
+    title: 'Anger & Release',
+    emoji: '🔥',
+    articles: [
+      { title: 'The fire inside: how to listen to what your anger is trying to protect', url: 'https://www.psychologytoday.com/us/blog/turning-straw-gold/201509/the-wisdom-anger' },
+      { title: 'Somatic release: physical ways to let go of stored frustration', url: 'https://www.healthline.com/health/somatic-experiencing' },
+      { title: 'Cooling the embers: finding quiet after a storm of irritation', url: 'https://www.mindful.org/how-to-work-with-anger/' }
+    ],
+    books: [
+      { title: 'Anger: Wisdom for Cooling the Flames', author: 'Thich Nhat Hanh' },
+      { title: 'The Dance of Anger', author: 'Harriet Lerner' }
+    ]
+  },
+  presence: {
+    title: 'Quiet Presence',
+    emoji: '🍵',
+    articles: [
+      { title: 'The cup of tea meditation: sensory focus in everyday tasks', url: 'https://www.mindful.org/the-cup-of-tea-meditation/' },
+      { title: 'Living in slow-motion: the health benefits of micro-pauses', url: 'https://hbr.org/2021/05/make-time-for-micro-breaks' },
+      { title: 'Walking grounding: how to connect your feet to the earth under stress', url: 'https://www.healthline.com/health/grounding-techniques' }
+    ],
+    books: [
+      { title: 'Peace Is Every Step', author: 'Thich Nhat Hanh' },
+      { title: 'Wherever You Go, There You Are', author: 'Jon Kabat-Zinn' }
+    ]
   }
 };
