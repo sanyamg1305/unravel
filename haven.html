@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Haven — Sukoon</title>
+<meta name="description" content="Your personal haven. Water your plant, review your emotional weather history, write weekly rituals, and download your suitcase.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Lora:ital@0;1&family=Quicksand:wght@500;600;700&family=Nunito:wght@400;600&display=swap" rel="stylesheet">
+<link rel="icon" type="image/jpeg" href="assets/logo.jpeg">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<div class="breath-bg" aria-hidden="true">
+  <span class="orb orb-a"></span>
+  <span class="orb orb-b"></span>
+  <span class="orb orb-c"></span>
+</div>
+
+<header class="site-header">
+  <a href="/" class="brand"><span class="brand-mark" aria-hidden="true"><img src="assets/logo.jpeg" alt="" class="brand-mark-img"></span>Sukoon</a>
+  <div class="header-actions">
+    <button class="mini-toggle sun-moon-toggle" aria-label="Toggle night mode" aria-pressed="false">☀️</button>
+    <button class="mini-toggle sensory-toggle" aria-label="Toggle low-sensory, calmer mode" aria-pressed="false">🌿</button>
+  </div>
+</header>
+
+<main>
+  <section class="page-section">
+    <div class="wrap center">
+      <p class="eyebrow">the haven</p>
+      <h1 class="display-sm">Your quiet growth space.</h1>
+      <p class="lede lede-sm">No streaks, no pressure, no comparison. Just a place to notice how you carry yourself through the days.</p>
+    </div>
+
+    <div class="wrap haven-dashboard" style="margin-top: 40px;">
+      
+      <!-- 1. The Growing Plant -->
+      <div class="plant-box">
+        <div id="plant-container">
+          <!-- Dynamically changing SVG based on visits -->
+          <svg class="plant-svg" viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">
+            <path class="plant-pot" d="M35 90 L65 90 L60 115 L40 115 Z" />
+            <!-- Stem and leaves injected dynamically -->
+            <path class="plant-stem" d="M50 90 L50 90" id="plant-stem-path" />
+          </svg>
+        </div>
+        <div style="text-align:left; max-width:320px;">
+          <h2 class="display-sm" style="font-size:1.15rem; margin-bottom:6px;">The Growing Plant</h2>
+          <p class="lede lede-sm" style="font-size:0.92rem;" id="plant-desc">Every visit and reflection quietly waters a tiny seed. It grows at its own steady pace.</p>
+          <button class="btn btn-secondary" id="water-plant-btn" style="margin-top:10px; min-height:36px; padding:6px 14px; font-size:0.85rem;">💦 Water Plant</button>
+        </div>
+      </div>
+
+      <!-- 2. The Early Whisper (Opt-in Pattern Alerts) -->
+      <div class="card" style="text-align:left;" id="early-whisper-box">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+          <h2 class="display-sm" style="font-size:1.15rem;">The Early Whisper</h2>
+          <label class="thermostat-checkbox-item" style="font-size:0.85rem; margin-bottom:0;">
+            <input type="checkbox" id="whisper-optin-check">
+            <span>Opt-In</span>
+          </label>
+        </div>
+        <p class="lede lede-sm">With your permission, Sukoon gently notices long-term emotional patterns without diagnosing or predicting. Your thoughts stay yours.</p>
+        <div id="whisper-content" class="hidden" style="margin-top:14px; background:var(--surface-soft); padding:16px; border-radius:var(--radius-md); border:1px solid var(--line); font-style:italic;">
+          Looking quietly at your history...
+        </div>
+      </div>
+
+      <!-- 3. Weekly Ritual -->
+      <div class="card" style="text-align:left;" id="weekly-ritual-box">
+        <h2 class="display-sm" style="font-size:1.15rem; margin-bottom:6px;">Weekly Ritual</h2>
+        <p class="lede lede-sm">Looking back at your week, what feels a little lighter now?</p>
+        <div id="weekly-ritual-form-wrap" style="margin-top:12px;">
+          <textarea class="textarea-input" id="weekly-input" placeholder="Reflect on what feels lighter..." style="min-height:90px;"></textarea>
+          <button class="btn btn-primary" id="weekly-submit" style="margin-top:10px; min-height:36px; padding:8px 18px; font-size:0.9rem;">Share with yourself</button>
+        </div>
+        <div id="weekly-history" style="margin-top:18px; display:flex; flex-direction:column; gap:12px;"></div>
+      </div>
+
+      <!-- 4. Emotional Timeline -->
+      <div class="card" style="text-align:left;">
+        <h2 class="display-sm" style="font-size:1.15rem; margin-bottom:6px;">Emotional Timeline</h2>
+        <p class="lede lede-sm">Moments you survived and walked through. Reflection, not productivity.</p>
+        <div class="timeline-list" id="timeline-list">
+          <p class="fineprint">No weather moments recorded yet. Complete a reflection session in the Living Room, Garden, or Attic to add cards here.</p>
+        </div>
+      </div>
+
+      <!-- 5. The Suitcase Exporter -->
+      <div class="card" style="text-align:left;">
+        <h2 class="display-sm" style="font-size:1.15rem; margin-bottom:6px;">The Suitcase Exporter</h2>
+        <p class="lede lede-sm">Collect everything you've saved, written, and felt. Export it into clean physical files to take with you or share with a therapist.</p>
+        <div style="display:flex; gap:12px; flex-wrap:wrap; margin-top:14px;">
+          <button class="btn btn-secondary" id="export-suitcase-txt">Export as TXT</button>
+          <button class="btn btn-secondary" id="export-suitcase-pdf">Export as PDF</button>
+        </div>
+        <p class="fineprint" style="margin-top:8px;">Includes Keepsake entries, letters to future self, weekly rituals, and emotional weather logs.</p>
+      </div>
+
+      <!-- 6. The Finite Library -->
+      <div class="card" style="text-align:left;">
+        <h2 class="display-sm" style="font-size:1.15rem; margin-bottom:4px;">The Library</h2>
+        <p class="lede lede-sm">Finite readings. No endless feeds. No doom scrolling. Exactly 3 articles and 2 books per category to help you hold space.</p>
+        
+        <div class="library-grid" id="library-grid">
+          <!-- Injected dynamically from js/library.js -->
+        </div>
+      </div>
+
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <nav>
+    <a href="/">The Foyer</a>
+    <a href="garden.html">The Garden</a>
+    <a href="attic.html">The Attic</a>
+    <a href="living-room.html">The Living Room</a>
+    <a href="safe-room.html">The Safe Room</a>
+    <a href="haven.html">The Haven</a>
+    <a href="about.html">The Foundation</a>
+    <a href="crisis.html">First Aid Kit</a>
+  </nav>
+  <p>Sukoon is a caring companion, not a licensed therapist, and not a substitute for professional or emergency care.</p>
+</footer>
+
+<div class="floating-controls fc-bottom-right">
+  <a href="crisis.html" class="porch-light" aria-label="Porch Light: get crisis support resources now"><span aria-hidden="true">🕯️</span><span class="label">Porch Light</span></a>
+</div>
+<div class="floating-controls fc-bottom-left">
+  <button class="quick-exit" aria-label="Slip out the back: leave this site instantly"><span aria-hidden="true">🚪</span><span class="label">Slip out the back</span></button>
+</div>
+
+<script src="js/global.js"></script>
+<script src="js/library.js"></script>
+<script src="js/haven.js"></script>
+</body>
+</html>

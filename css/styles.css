@@ -4,24 +4,26 @@
    ============================================================ */
 
 :root {
-  /* Foundations */
-  --parchment: #e3d1c3;
-  --parchment-deep: #d9c2b0;
-  --surface: #f3e8dd;
-  --surface-soft: #ede0d2;
-  --ink: #2c2a29;
-  --ink-soft: #5a534d;
-  --ink-faint: #8a8078;
-  --line: #d8c4b2;
+  /* Foundations: Sukoon v4 Color Palette */
+  --parchment: #F7F3EE;
+  --parchment-deep: #EAE3D9;
+  --surface: #FDFBF7;
+  --surface-soft: #FCF9F2;
+  --ink: #2C3E50;
+  --ink-soft: #435B73;
+  --ink-faint: #6C8096;
+  --line: #E3DCD1;
 
-  --rust: #a34a45;
-  --rust-deep: #8a3c38;
-  --teal: #1e5c6a;
-  --green: #4b7963;
-  --blue: #2d2f75;
+  --rust: #B8836F;
+  --rust-deep: #A1705D;
+  --rust-hover: #F5C7A9;
+  --green: #9AA88B;
+  --teal: #68858B;
+  --blue: #405C75;
+  --gold: #B39B7D;
 
-  --shadow-soft: 0 20px 45px -22px rgba(60, 40, 25, 0.35);
-  --shadow-lift: 0 10px 26px -14px rgba(60, 40, 25, 0.3);
+  --shadow-soft: 0 20px 45px -22px rgba(44, 62, 80, 0.15);
+  --shadow-lift: 0 10px 26px -14px rgba(44, 62, 80, 0.1);
 
   --radius-lg: 26px;
   --radius-md: 16px;
@@ -30,42 +32,30 @@
   --fade: 0.6s;
 
   --touch-min: 48px;
+
+  --letter-spacing: 0.02em;
+  --line-height-body: 1.7;
 }
 
-/* Night mode palette */
+/* Night theme variables */
 [data-theme="night"] {
-  --parchment: #241d1a;
-  --parchment-deep: #1b1614;
-  --surface: #2c2320;
-  --surface-soft: #332822;
-  --ink: #f1e4d6;
-  --ink-soft: #cbb9a8;
-  --ink-faint: #8f7d6e;
-  --line: #4a3b32;
-  --rust: #c97b6d;
-  --teal: #4a9aa8;
-  --green: #7bab8f;
-  --blue: #7679c9;
-  --shadow-soft: 0 20px 45px -20px rgba(0, 0, 0, 0.55);
-  --shadow-lift: 0 10px 26px -14px rgba(0, 0, 0, 0.5);
-}
-
-/* Sensory Thermostat: Low-Sensory mode */
-[data-sensory="low"] * {
-  animation: none !important;
-  transition: none !important;
-}
-[data-sensory="low"] {
-  --rust: #6b6560;
-  --teal: #5a5854;
-  --green: #605d58;
-  --blue: #5c5a57;
-}
-[data-sensory="low"] .orb,
-[data-sensory="low"] .twinkle,
-[data-sensory="low"] audio,
-[data-sensory="low"] .audio-player {
-  display: none !important;
+  --parchment: #1B2631;
+  --parchment-deep: #151D26;
+  --surface: #222F3E;
+  --surface-soft: #283747;
+  --ink: #EAECEE;
+  --ink-soft: #ABB2B9;
+  --ink-faint: #7F8C8D;
+  --line: #2C3E50;
+  --rust: #D98880;
+  --rust-deep: #C0392B;
+  --rust-hover: #FADBD8;
+  --green: #A2D9CE;
+  --teal: #85C1E9;
+  --blue: #AED6F1;
+  --gold: #F9E79F;
+  --shadow-soft: 0 20px 45px -20px rgba(0, 0, 0, 0.45);
+  --shadow-lift: 0 10px 26px -14px rgba(0, 0, 0, 0.4);
 }
 
 * { box-sizing: border-box; }
@@ -235,10 +225,20 @@ label:has(:focus-visible) {
   padding: 6px 10px;
 }
 .brand-mark {
-  width: 20px; height: 20px;
+  width: 40px; height: 40px;
   border-radius: 50%;
-  background: radial-gradient(circle at 30% 30%, var(--rust), var(--rust-deep));
+  background: var(--parchment-deep);
   display: inline-block;
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.brand-mark-img {
+  position: absolute;
+  width: 148px;
+  max-width: none;
+  left: -54px;
+  top: -15px;
 }
 .header-actions { display: flex; align-items: center; gap: 10px; }
 
@@ -389,6 +389,13 @@ label:has(:focus-visible) {
 @keyframes mat-rise {
   from { opacity: 0; transform: translateY(24px) scale(0.97); }
   to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.welcome-mat-logo {
+  width: 240px;
+  max-width: 75%;
+  height: auto;
+  border-radius: var(--radius-md);
+  margin-bottom: -4px;
 }
 .promise-list {
   list-style: none;
@@ -804,3 +811,592 @@ label:has(:focus-visible) {
   0%, 100% { transform: scale(1); opacity: 0.92; }
   50% { transform: scale(1.03); opacity: 1; }
 }
+
+/* ============================================================
+   SUKOON v4 — Sensory Thermostat & Living World CSS
+   ============================================================ */
+
+/* 1. Sensory Thermostat Core classes */
+.no-animations,
+.no-animations * {
+  animation: none !important;
+  transition: none !important;
+}
+.reduce-transparency,
+.reduce-transparency * {
+  backdrop-filter: none !important;
+  opacity: 1 !important;
+  box-shadow: none !important;
+}
+.reduce-transparency .orb,
+.reduce-transparency .welcome-mat-overlay {
+  background: var(--parchment) !important;
+}
+.large-text {
+  font-size: 1.18rem !important;
+}
+.large-text .display {
+  font-size: clamp(2.4rem, 6vw, 3.8rem) !important;
+}
+.large-text .display-sm {
+  font-size: clamp(1.8rem, 4.5vw, 2.4rem) !important;
+}
+.large-text p, 
+.large-text button, 
+.large-text input, 
+.large-text textarea, 
+.large-text a, 
+.large-text li {
+  font-size: 1.15rem !important;
+}
+.freeze-bg .orb,
+.freeze-bg .breath-bg *,
+.freeze-bg .weather-particle,
+.freeze-bg .swaying-tree {
+  animation-play-state: paused !important;
+}
+
+/* 2. Living World: Time of Day Styles */
+[data-time="morning"] {
+  background-image:
+    radial-gradient(circle at 10% 10%, rgba(254, 245, 231, 0.6), transparent 50%),
+    radial-gradient(circle at 85% 92%, rgba(0, 0, 0, 0.03), transparent 40%);
+}
+[data-time="afternoon"] {
+  background-image:
+    radial-gradient(circle at 50% 10%, rgba(255, 255, 255, 0.4), transparent 60%),
+    radial-gradient(circle at 85% 92%, rgba(0, 0, 0, 0.02), transparent 40%);
+}
+[data-time="evening"] {
+  background-image:
+    radial-gradient(circle at 90% 15%, rgba(245, 199, 169, 0.7), transparent 60%),
+    radial-gradient(circle at 15% 85%, rgba(184, 131, 111, 0.2), transparent 50%);
+}
+[data-time="night"] {
+  background-image:
+    radial-gradient(circle at 80% 15%, rgba(104, 133, 139, 0.25), transparent 50%),
+    radial-gradient(circle at 15% 85%, rgba(44, 62, 80, 0.4), transparent 60%);
+}
+[data-time="nightstand"] {
+  --parchment: #0C0A09 !important;
+  --parchment-deep: #070605 !important;
+  --surface: #141110 !important;
+  --surface-soft: #1C1917 !important;
+  --ink: #A8A29E !important;
+  --ink-soft: #78716C !important;
+  --ink-faint: #57524D !important;
+  --line: #292524 !important;
+  --rust: #78350F !important;
+  --rust-deep: #451A03 !important;
+  --rust-hover: #B45309 !important;
+  --green: #27272A !important;
+  --teal: #1E293B !important;
+  --blue: #0F172A !important;
+  --gold: #78350F !important;
+  --shadow-soft: 0 10px 30px rgba(0,0,0,0.8);
+  --shadow-lift: 0 5px 15px rgba(0,0,0,0.7);
+  background-image: radial-gradient(circle at 50% 0%, rgba(180, 83, 9, 0.12), transparent 60%) !important;
+}
+[data-time="nightstand"] .orb {
+  opacity: 0.03 !important;
+}
+
+/* 3. Living World: Season Styles & Accents */
+[data-season="spring"] {
+  --green: #82a86b;
+  --teal: #507e8b;
+}
+[data-season="monsoon"] {
+  --parchment: #E6E8EA;
+  --parchment-deep: #D5D8DC;
+  --teal: #4b6f7a;
+}
+[data-season="autumn"] {
+  --rust: #A05C45;
+  --gold: #A98548;
+}
+[data-season="winter"] {
+  --parchment: #EFF2F5;
+  --teal: #788a9c;
+  --blue: #2F4F4F;
+}
+
+/* Weather Overlays */
+.season-overlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  overflow: hidden;
+}
+.weather-particle {
+  position: absolute;
+  background: var(--particle-bg, #fff);
+  border-radius: 50%;
+  pointer-events: none;
+  opacity: var(--p-op, 0.6);
+  animation: fall var(--p-dur, 10s) linear infinite;
+}
+@keyframes fall {
+  0% { transform: translateY(-20px) translateX(0) rotate(0deg); }
+  100% { transform: translateY(105vh) translateX(var(--p-dx, 30px)) rotate(var(--p-rot, 360deg)); }
+}
+
+/* 4. Room Visual Decoration Modules */
+/* Living Room Atmosphere Details */
+.living-room-decor {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  margin-top: 24px;
+  flex-wrap: wrap;
+}
+.cozy-element {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  padding: 12px 18px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.9rem;
+}
+.cozy-element .lamp-glow {
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  background: #F9E79F;
+  box-shadow: 0 0 10px #F9E79F;
+  animation: flicker 4s ease-in-out infinite;
+}
+@keyframes flicker {
+  0%, 100% { opacity: 0.95; }
+  50% { opacity: 0.75; }
+}
+.cozy-element .tea-steam {
+  display: inline-block;
+  animation: steam 3s ease-in-out infinite;
+}
+@keyframes steam {
+  0%, 100% { transform: translateY(0) scaleX(1); opacity: 0.4; }
+  50% { transform: translateY(-4px) scaleX(1.1); opacity: 0.8; }
+}
+
+/* Garden Swaying Trees & Skies */
+.garden-decor {
+  width: 100%;
+  max-width: 480px;
+  margin: 20px auto;
+  display: flex;
+  justify-content: space-around;
+  opacity: 0.75;
+}
+.swaying-tree {
+  animation: sway 6s ease-in-out infinite alternate;
+  transform-origin: bottom center;
+}
+@keyframes sway {
+  0% { transform: rotate(-2deg); }
+  100% { transform: rotate(2deg); }
+}
+
+/* Attic Moonlight and Dust */
+.attic-moonlight {
+  position: absolute;
+  top: 0; left: 25%;
+  width: 20%; height: 100%;
+  background: linear-gradient(105deg, rgba(255, 255, 255, 0.08), transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+.dust-container {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* 5. Companion Chat & Onboarding Rating */
+.companion-card {
+  margin-top: 28px;
+  text-align: left;
+}
+.chat-log {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-height: 400px;
+  overflow-y: auto;
+  padding: 10px 4px;
+  margin-bottom: 16px;
+}
+.chat-bubble {
+  max-width: 85%;
+  padding: 16px 20px;
+  border-radius: var(--radius-md);
+  line-height: 1.6;
+  font-size: 0.98rem;
+  animation: bubble-in 0.5s var(--ease) forwards;
+}
+@keyframes bubble-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.chat-bubble.companion {
+  background: var(--surface-soft);
+  color: var(--ink);
+  border: 1px solid var(--line);
+  align-self: flex-start;
+  border-bottom-left-radius: 4px;
+}
+.chat-bubble.user {
+  background: var(--rust);
+  color: #FFF;
+  align-self: flex-end;
+  border-bottom-right-radius: 4px;
+}
+.typing-indicator {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+  padding: 8px 16px;
+  color: var(--ink-soft);
+  font-size: 0.88rem;
+  font-style: italic;
+}
+.typing-indicator span {
+  width: 6px; height: 6px;
+  background: var(--ink-soft);
+  border-radius: 50%;
+  animation: typing-dot 1.4s infinite ease-in-out;
+}
+.typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+.typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+@keyframes typing-dot {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+
+/* Rating Screen (does weight feel different) */
+.reflection-rating-overlay {
+  text-align: center;
+  animation: soft-fade 0.6s var(--ease);
+}
+.weather-rating-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 12px;
+  width: 100%;
+  margin: 20px 0;
+}
+.weather-rating-card {
+  border: 1px solid var(--line);
+  background: var(--surface);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  cursor: pointer;
+  transition: all 0.25s var(--ease);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+}
+.weather-rating-card:hover {
+  border-color: var(--rust);
+  background: var(--surface-soft);
+  transform: translateY(-2px);
+}
+.weather-rating-card .weather-icon {
+  font-size: 2rem;
+}
+
+/* 6. The Window Visual Scenes & Empty Chair (Safe Room) */
+.safe-room-layout {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 30px;
+  width: 100%;
+  margin-top: 24px;
+}
+@media(max-width: 768px) {
+  .safe-room-layout { grid-template-columns: 1fr; }
+}
+.window-scenes-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.scene-nav-btn {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  padding: 14px;
+  border-radius: var(--radius-sm);
+  text-align: left;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: all 0.2s;
+}
+.scene-nav-btn.active {
+  background: var(--rust);
+  color: #FFF;
+  border-color: var(--rust);
+}
+.scene-nav-btn:hover:not(.active) {
+  background: var(--rust-hover);
+  border-color: var(--rust);
+}
+.window-canvas-container {
+  position: relative;
+  width: 100%;
+  height: 380px;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: #000;
+  border: 1px solid var(--line);
+}
+.window-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.window-overlay-text {
+  position: absolute;
+  bottom: 20px; left: 20px;
+  color: rgba(255,255,255,0.7);
+  font-size: 0.88rem;
+  font-family: inherit;
+  pointer-events: none;
+}
+
+/* Empty Chair feature styles */
+.empty-chair-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+  align-items: center;
+  text-align: left;
+}
+@media(max-width: 640px) {
+  .empty-chair-grid { grid-template-columns: 1fr; }
+}
+.empty-chair-graphic {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.chair-icon {
+  width: 160px; height: 160px;
+  fill: none;
+  stroke: var(--rust);
+  stroke-width: 2;
+  opacity: 0.8;
+  animation: breathe 8s ease-in-out infinite;
+}
+
+/* 7. The Haven Dashboard Components */
+.haven-dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: 36px;
+  width: 100%;
+}
+.plant-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 30px;
+  padding: 30px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+}
+@media(max-width: 560px) {
+  .plant-box { flex-direction: column; text-align: center; }
+}
+.plant-svg {
+  width: 120px; height: 120px;
+}
+.plant-stem { fill: none; stroke: var(--green); stroke-width: 4; stroke-linecap: round; }
+.plant-leaf { fill: var(--green); }
+.plant-pot { fill: var(--rust); }
+
+.timeline-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 14px;
+}
+.timeline-item {
+  border-left: 3px solid var(--green);
+  padding: 8px 18px;
+  text-align: left;
+  background: var(--surface-soft);
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 14px;
+}
+.timeline-date {
+  font-size: 0.8rem;
+  color: var(--ink-faint);
+  margin-bottom: 4px;
+}
+.timeline-weather-badge {
+  font-size: 0.85rem;
+  background: var(--surface);
+  padding: 6px 12px;
+  border-radius: 99px;
+  border: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* Exporter and finite library */
+.library-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 20px;
+  width: 100%;
+  margin-top: 16px;
+}
+.library-category-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  padding: 24px;
+  text-align: left;
+}
+.library-item-list {
+  list-style: none;
+  padding: 0; margin: 12px 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.library-item-list li {
+  font-size: 0.92rem;
+  border-bottom: 1px dashed var(--line);
+  padding-bottom: 8px;
+}
+.library-item-list li:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+.library-item-list a {
+  text-decoration: none;
+  font-weight: 600;
+  color: var(--teal);
+}
+.library-item-list a:hover {
+  color: var(--rust);
+}
+.library-item-list span.book-author {
+  font-size: 0.8rem;
+  color: var(--ink-faint);
+  display: block;
+}
+
+/* 8. Persistent Thermostat Panel Styles */
+.thermostat-toggle-btn {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  padding: 10px 18px;
+  border-radius: 999px;
+  color: var(--ink-soft);
+  font-weight: 700;
+  font-size: 0.88rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.thermostat-toggle-btn:hover {
+  border-color: var(--rust);
+  color: var(--rust);
+}
+.thermostat-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(44, 62, 80, 0.4);
+  z-index: 100;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  animation: overlay-in 0.4s var(--ease);
+}
+.thermostat-drawer {
+  width: 100%;
+  max-width: 600px;
+  background: var(--surface);
+  border-top: 1px solid var(--line);
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  box-shadow: 0 -10px 40px rgba(0,0,0,0.15);
+  padding: 30px;
+  animation: drawer-up 0.4s var(--ease);
+  text-align: left;
+}
+@keyframes drawer-up {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+.thermostat-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-top: 16px;
+}
+@media(max-width: 480px) {
+  .thermostat-grid { grid-template-columns: 1fr; }
+}
+.thermostat-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.thermostat-group label {
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-faint);
+}
+.thermostat-select {
+  width: 100%;
+  min-height: var(--touch-min);
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+  background: var(--surface-soft);
+  color: var(--ink);
+  font-family: inherit;
+  font-size: 0.95rem;
+}
+.thermostat-checkbox-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  grid-column: 1 / -1;
+  margin-top: 10px;
+  border-top: 1px solid var(--line);
+  padding-top: 16px;
+}
+.thermostat-checkbox-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+.thermostat-checkbox-item input {
+  width: 18px; height: 18px;
+  cursor: pointer;
+}
+

@@ -8,6 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Lora:ital@0;1&family=Quicksand:wght@500;600;700&family=Nunito:wght@400;600&display=swap" rel="stylesheet">
+<link rel="icon" type="image/jpeg" href="assets/logo.jpeg">
 <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
@@ -19,7 +20,7 @@
 </div>
 
 <header class="site-header">
-  <a href="/" class="brand"><span class="brand-mark" aria-hidden="true"></span>Sukoon</a>
+  <a href="/" class="brand"><span class="brand-mark" aria-hidden="true"><img src="assets/logo.jpeg" alt="" class="brand-mark-img"></span>Sukoon</a>
   <div class="header-actions">
     <button class="mini-toggle sun-moon-toggle" aria-label="Toggle night mode" aria-pressed="false">☀️</button>
     <button class="mini-toggle sensory-toggle" aria-label="Toggle low-sensory, calmer mode" aria-pressed="false">🌿</button>
@@ -32,35 +33,44 @@
   <section class="page-section" id="foyer-view">
     <div class="wrap center">
       <p class="eyebrow">no menus, just how you feel</p>
-      <h1 class="display">Where would you like to sit today?</h1>
-      <p class="lede">There's no navigation bar here on purpose. Pick whatever feels closest to true right now, and we'll take you somewhere that might help. There's no wrong answer.</p>
+      <h1 class="display">Where is your head at today?</h1>
+      <p class="lede">Pick the emotion that feels closest to true right now, and we'll guide you to a matching space. There are no evaluations here, and no wrong answers.</p>
 
       <div class="mood-grid" role="group" aria-label="Choose what you're feeling">
-        <a class="mood-card" href="garden.html#reset-circle"><span class="mood-emoji" aria-hidden="true">🌪️</span>My brain won't shut up</a>
-        <a class="mood-card" href="living-room.html#heavy-blanket"><span class="mood-emoji" aria-hidden="true">🪫</span>I'm running on empty</a>
-        <a class="mood-card" href="attic.html"><span class="mood-emoji" aria-hidden="true">🌫️</span>I feel like a ghost today</a>
-        <a class="mood-card" href="garden.html#scream-jar"><span class="mood-emoji" aria-hidden="true">🎈</span>I'm about to pop</a>
-        <a class="mood-card" href="attic.html#fireplace"><span class="mood-emoji" aria-hidden="true">🌧️</span>I'm carrying heavy weather</a>
-        <a class="mood-card" href="living-room.html#shared-couch"><span class="mood-emoji" aria-hidden="true">🕰️</span>Missing something I can't name</a>
-        <a class="mood-card" href="garden.html#scream-jar"><span class="mood-emoji" aria-hidden="true">🔥</span>I'm so angry I could scream</a>
-        <a class="mood-card" href="garden.html#sound-window"><span class="mood-emoji" aria-hidden="true">🪴</span>Just want to sit in silence</a>
+        <a class="mood-card" href="living-room.html?emotion=Sad"><span class="mood-emoji" aria-hidden="true">🌧️</span>Sad</a>
+        <a class="mood-card" href="garden.html?emotion=Angry"><span class="mood-emoji" aria-hidden="true">🔥</span>Angry</a>
+        <a class="mood-card" href="garden.html?emotion=Anxious"><span class="mood-emoji" aria-hidden="true">🌪️</span>Anxious</a>
+        <a class="mood-card" href="attic.html?emotion=Lonely"><span class="mood-emoji" aria-hidden="true">🌫️</span>Lonely</a>
+        <a class="mood-card" href="garden.html?emotion=Overwhelmed"><span class="mood-emoji" aria-hidden="true">🎈</span>Overwhelmed</a>
+        <a class="mood-card" href="living-room.html?emotion=Burnt%20Out"><span class="mood-emoji" aria-hidden="true">🪫</span>Burnt Out</a>
+        <a class="mood-card" href="living-room.html?emotion=Empty"><span class="mood-emoji" aria-hidden="true">🕳️</span>Empty</a>
+        <a class="mood-card" href="attic.html?emotion=Grieving"><span class="mood-emoji" aria-hidden="true">🕯️</span>Grieving</a>
       </div>
 
       <p class="fineprint">Prefer the quiet, low-stimulus view? <button class="link-btn" id="goto-nightstand">Visit the Nightstand</button> instead.</p>
     </div>
   </section>
 
-  <!-- ============ THE NIGHTSTAND (auto 10pm-5am, or manual) ============ -->
+  <!-- ============ THE NIGHTSTAND (auto 1am-5am, or manual) ============ -->
   <section class="page-section hidden" id="nightstand-view">
     <div class="wrap center">
       <p class="eyebrow">the nightstand</p>
       <h1 class="display-sm">It's quiet here. That's on purpose.</h1>
       <p class="lede lede-sm">A slower, dimmer version of Sukoon for the hours when everything feels heavier. Nothing here asks much of you.</p>
 
-      <div class="nightstand-card">
+      <div class="nightstand-card" style="width: 100%; max-width: 560px;">
         <span class="active-counter"><span class="dot" aria-hidden="true"></span> <span id="active-count-text">Others are here quietly with you tonight.</span></span>
+        
+        <div style="display:flex; justify-content:center; gap:20px; margin: 16px 0; align-items:center;">
+          <div class="cozy-element" style="border:none; background:transparent; padding:0;">
+            <span class="lamp-glow"></span>
+            <span style="font-size:0.85rem; color:var(--ink-soft);">bedside lamp glow</span>
+          </div>
+        </div>
+
         <div class="pacer-static" role="img" aria-label="A slow, expanding and contracting circle, guiding a gentle breath in and out"></div>
-        <div class="sound-window" style="width:100%; max-width:360px;">
+        
+        <div class="sound-window" style="width:100%; max-width:360px; margin-top: 14px;">
           <div class="sound-track">
             <span>🌙 Slow night rain</span>
             <button aria-label="Play slow night rain sound" data-track="rain">▶</button>
@@ -70,6 +80,48 @@
             <button aria-label="Play soft wind chimes sound" data-track="chimes">▶</button>
           </div>
         </div>
+      </div>
+
+      <!-- Nightstand Companion Chat -->
+      <div class="card companion-card" id="nightstand-chat" style="width:100%; max-width:560px; margin-top:28px;">
+        <h2 class="display-sm" style="font-size:1.15rem; margin-bottom:8px;">A Quiet Companion</h2>
+        <div class="chat-log" id="nightstand-chat-log"></div>
+        <div class="typing-indicator hidden" id="nightstand-typing"><span></span><span></span><span></span></div>
+        <div style="display:flex; gap:10px; margin-top:10px;">
+          <input class="text-input" id="nightstand-chat-input" placeholder="Type whatever is keeping you awake…" style="flex:1;">
+          <button class="btn btn-primary" id="nightstand-chat-send">Send</button>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:14px;">
+          <p class="fineprint" style="font-style:italic;">Your words stay only here, and are never saved or sent to advertising networks.</p>
+          <button class="btn btn-secondary" id="nightstand-chat-finish" style="padding: 6px 14px; min-height: 36px; font-size: 0.85rem;">I'm ready to sleep</button>
+        </div>
+      </div>
+
+      <!-- Rating Overlay -->
+      <div class="card hidden" id="nightstand-rating" style="width:100%; max-width:560px; margin-top:28px;">
+        <h2 class="display-sm" style="font-size:1.2rem; margin-bottom:8px;">Does the weight feel any different now?</h2>
+        <p class="lede lede-sm">How does your weather feel right now?</p>
+        <div class="weather-rating-grid">
+          <div class="weather-rating-card" data-weather="Heavy Rain">
+            <span class="weather-icon">🌧️</span><span>Heavy Rain</span>
+          </div>
+          <div class="weather-rating-card" data-weather="Fog">
+            <span class="weather-icon">🌫️</span><span>Fog</span>
+          </div>
+          <div class="weather-rating-card" data-weather="Cloudy">
+            <span class="weather-icon">☁️</span><span>Cloudy</span>
+          </div>
+          <div class="weather-rating-card" data-weather="Gentle Breeze">
+            <span class="weather-icon">🌬️</span><span>Gentle Breeze</span>
+          </div>
+          <div class="weather-rating-card" data-weather="Clear Morning">
+            <span class="weather-icon">☀️</span><span>Clear Morning</span>
+          </div>
+        </div>
+        <button class="btn btn-secondary" id="nightstand-rating-close">Close</button>
+      </div>
+
+      <div style="margin-top:24px;">
         <button class="link-btn" id="goto-foyer">Prefer the Foyer instead?</button>
       </div>
     </div>
@@ -83,6 +135,8 @@
     <a href="garden.html">The Garden</a>
     <a href="attic.html">The Attic</a>
     <a href="living-room.html">The Living Room</a>
+    <a href="safe-room.html">The Safe Room</a>
+    <a href="haven.html">The Haven</a>
     <a href="about.html">The Foundation</a>
     <a href="crisis.html">First Aid Kit</a>
   </nav>

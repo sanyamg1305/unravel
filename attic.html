@@ -8,6 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Lora:ital@0;1&family=Quicksand:wght@500;600;700&family=Nunito:wght@400;600&display=swap" rel="stylesheet">
+<link rel="icon" type="image/jpeg" href="assets/logo.jpeg">
 <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
@@ -18,8 +19,11 @@
   <span class="orb orb-c"></span>
 </div>
 
+<div class="attic-moonlight" aria-hidden="true"></div>
+<div class="dust-container" aria-hidden="true"><canvas id="dust-canvas" style="width:100%; height:100%; display:block; opacity:0.6;"></canvas></div>
+
 <header class="site-header">
-  <a href="/" class="brand"><span class="brand-mark" aria-hidden="true"></span>Sukoon</a>
+  <a href="/" class="brand"><span class="brand-mark" aria-hidden="true"><img src="assets/logo.jpeg" alt="" class="brand-mark-img"></span>Sukoon</a>
   <div class="header-actions">
     <button class="btn btn-ghost hidden" id="attic-signout">Step out of the Attic</button>
     <button class="mini-toggle sun-moon-toggle" aria-label="Toggle night mode" aria-pressed="false">☀️</button>
@@ -41,6 +45,49 @@
         The Attic needs a Supabase project to store your account and encrypted entries. Create a free one at
         <code>supabase.com</code>, run <code>supabase/schema.sql</code> in its SQL editor, then add your project URL and anon key
         to <code>js/supabase-config.js</code>.
+      </div>
+    </div>
+
+    <!-- Companion Space -->
+    <div class="wrap wrap-narrow hidden" id="companion-space" style="margin-top:36px;">
+      <div class="card companion-card">
+        <h2 class="display-sm" style="font-size:1.2rem; margin-bottom:8px;">A Quiet Companion</h2>
+        <div class="chat-log" id="companion-chat-log"></div>
+        <div class="typing-indicator hidden" id="companion-typing"><span></span><span></span><span></span></div>
+        <div style="display:flex; gap:10px; margin-top:10px;">
+          <input class="text-input" id="companion-input" placeholder="Type whatever is in your head right now…" style="flex:1;">
+          <button class="btn btn-primary" id="companion-send">Send</button>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:14px;">
+          <p class="fineprint" style="font-style:italic;">Your words stay only here, and are never saved or sent to advertising networks.</p>
+          <button class="btn btn-secondary" id="companion-finish" style="padding: 6px 14px; min-height: 36px; font-size: 0.85rem;">I'm ready to step away</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Rating Screen -->
+    <div class="wrap wrap-narrow hidden" id="reflection-rating" style="margin-top:36px;">
+      <div class="card reflection-rating-overlay">
+        <h2 class="display-sm" style="font-size:1.25rem; margin-bottom:8px;">Does the weight feel any different now?</h2>
+        <p class="lede lede-sm">How does your weather feel right now?</p>
+        <div class="weather-rating-grid">
+          <div class="weather-rating-card" data-weather="Heavy Rain">
+            <span class="weather-icon">🌧️</span><span>Heavy Rain</span>
+          </div>
+          <div class="weather-rating-card" data-weather="Fog">
+            <span class="weather-icon">🌫️</span><span>Fog</span>
+          </div>
+          <div class="weather-rating-card" data-weather="Cloudy">
+            <span class="weather-icon">☁️</span><span>Cloudy</span>
+          </div>
+          <div class="weather-rating-card" data-weather="Gentle Breeze">
+            <span class="weather-icon">🌬️</span><span>Gentle Breeze</span>
+          </div>
+          <div class="weather-rating-card" data-weather="Clear Morning">
+            <span class="weather-icon">☀️</span><span>Clear Morning</span>
+          </div>
+        </div>
+        <button class="btn btn-secondary" id="rating-close-btn">Close</button>
       </div>
     </div>
 
@@ -86,6 +133,26 @@
         <div id="keepsake-list" style="margin-top:18px;"></div>
       </div>
 
+      <!-- Letter to Future Self -->
+      <div class="card" id="future-letter-box" style="margin-bottom:28px; text-align:left;">
+        <h2 class="display-sm" style="font-size:1.15rem;">Letter to Future Me</h2>
+        <p class="lede lede-sm" style="margin-top:6px;">Write a private letter to your future self. It will remain locked and quietly wait until the date arrives. No notifications—only if you return.</p>
+        <textarea class="textarea-input" id="future-letter-input" placeholder="What would you like to say to yourself in the future? Write from the heart..." style="margin-top:12px;"></textarea>
+        
+        <div style="display:flex; align-items:center; gap:12px; margin-top:12px; flex-wrap:wrap;">
+          <label class="field-label" for="future-letter-time" style="margin-bottom:0;">Deliver in:</label>
+          <select class="thermostat-select" id="future-letter-time" style="width:auto; min-height:36px; padding:6px 12px; font-size:0.9rem;">
+            <option value="1">1 Month</option>
+            <option value="3">3 Months</option>
+            <option value="6">6 Months</option>
+            <option value="12">1 Year</option>
+          </select>
+          <button class="btn btn-primary" id="future-letter-save" style="min-height:36px; padding:8px 18px; font-size:0.9rem;">Lock &amp; Save Letter</button>
+        </div>
+        <p class="fineprint" id="future-letter-status" style="margin-top:8px;"></p>
+        <div id="delivered-letters" style="margin-top:16px;"></div>
+      </div>
+
       <div class="card" style="margin-bottom:28px; text-align:left;">
         <h2 class="display-sm" style="font-size:1.15rem;">Pack Your Bags</h2>
         <p class="lede lede-sm" style="margin-top:6px;">Everything you've kept, yours to take anytime.</p>
@@ -119,6 +186,8 @@
     <a href="garden.html">The Garden</a>
     <a href="attic.html">The Attic</a>
     <a href="living-room.html">The Living Room</a>
+    <a href="safe-room.html">The Safe Room</a>
+    <a href="haven.html">The Haven</a>
     <a href="about.html">The Foundation</a>
     <a href="crisis.html">First Aid Kit</a>
   </nav>

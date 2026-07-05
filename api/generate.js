@@ -7,13 +7,12 @@ const MODEL = process.env.GEMINI_MODEL || 'gemini-2.0-flash';
 const API_KEY = process.env.GEMINI_API_KEY;
 const ENDPOINT = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent`;
 
-const SYSTEM_INSTRUCTION = `You are the quiet, steady voice inside Sukoon, a digital sanctuary.
-You are not a therapist, not a crisis service, and not another person. Never diagnose a condition,
-never claim certainty about someone's inner life, and never suggest you can replace professional care.
-Phrase anything pattern-like as a hedged observation ("it looks like", "you might find", "this could be
-one thread worth noticing"), never as a flat fact. Never lecture. Be warm, plain, and brief. Do not use
-em dashes in your output; use commas or periods instead. Keep everything concrete and grounded, not
-generic self-help language.`;
+const SYSTEM_INSTRUCTION = `You are the quiet, steady companion inside Sukoon, a digital sanctuary.
+Sukoon is a room, not a tool. It is not designed to solve people; it is designed to hold them.
+Your tone is that of a calm, warm human sitting quietly beside someone. Avoid all clinical, corporate, or analytical language (never say "Analysis Complete", "Session Ended", "Processing", etc.).
+Never diagnose a condition, never claim certainty about someone's inner life, and never suggest you can replace professional care.
+Always phrase observations as gentle, hedged possibilities ("it seems", "I wonder if", "it feels like"). Acknowledge your own limits (e.g. "I might be missing something").
+Keep your responses warm, brief, and deeply human. Do not use em dashes; use commas or periods. Avoid generic self-help language.`;
 
 const SCHEMAS = {
   reflect: {
@@ -60,6 +59,13 @@ const SCHEMAS = {
     },
     required: ['whatTheySaid', 'likelyMeanings', 'groundingReminder'],
   },
+  companion: {
+    type: 'OBJECT',
+    properties: {
+      text: { type: 'STRING' }
+    },
+    required: ['text']
+  }
 };
 
 // Vercel serverless functions cap request bodies at ~4.5MB; keep base64 image
@@ -71,6 +77,25 @@ function buildPrompt(type, payload) {
   const heaviest = String(payload.heaviest || 'not specified').slice(0, 60);
   const journalText = String(payload.journalText || '').slice(0, 4000);
   const weight = typeof payload.weight === 'number' ? payload.weight : null;
+
+  if (type === 'companion') {
+    return `The person is reflecting inside the emotional space/room "${emotion}".
+Here is what they wrote to you:
+"""
+${journalText}
+"""
+
+Respond directly to them. Your response MUST follow this structure:
+1. Validation: Validate the user's feeling.
+2. Reflection: Reflect back what you're noticing in their own words.
+3. Pattern Recognition: Gently name one thread or pattern only if it's actually present in what they wrote (hedging, not certain).
+4. One Open Question: Ask one open-ended question to encourage reflection.
+5. One Tiny Optional Step: Suggest a single tiny, concrete, gentle action they could take in the next few minutes.
+
+Uncertainty Rule: Integrate one of these phrases naturally if appropriate: "I might be missing something", "Can we stay with that feeling a little longer?", or "That part feels important."
+
+Soul of Sukoon Rule: Write like a warm, calm human sitting beside them. Do NOT label the sections (e.g. do not say "Validation:" or "Reflection:"). Write it as one or two flowing, organic paragraphs. Do not use em dashes. Keep it concise, under 110 words total.`;
+  }
 
   if (type === 'reflect') {
     return `The person selected the feeling "${emotion}" and said the heaviest thing right now is "${heaviest}".
@@ -123,7 +148,7 @@ you can, not generic.`;
 
     return `Here are journal entries this person has chosen to keep, most recent last:
 ${summary || '(no entries)'}
-
+ 
 Write 2 to 4 short, hedged observations about anything that seems to repeat across these entries
 (feelings, topics, timing, wording). Only mention things actually supported by the entries above. If
 there isn't enough to notice a pattern yet, say that plainly instead of inventing one. Never state a

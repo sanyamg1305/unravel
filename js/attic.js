@@ -8,7 +8,6 @@
   let currentUser = null;
 
   /* ============ Setup / connection state ============ */
-
   function isConfigured() {
     return !!(window.SUKOON_SUPABASE && window.SUKOON_SUPABASE.url && window.SUKOON_SUPABASE.anonKey);
   }
@@ -19,7 +18,6 @@
   }
 
   /* ============ Client-side encryption (WebCrypto) ============ */
-
   function b64encode(buf) {
     return btoa(String.fromCharCode(...new Uint8Array(buf)));
   }
@@ -68,7 +66,6 @@
   let encryptionKey = null;
 
   /* ============ Auth ============ */
-
   async function ensureProfile(userId) {
     const { data } = await supa.from('profiles').select('*').eq('id', userId).maybeSingle();
     if (data) return data;
@@ -101,6 +98,8 @@
     const submitBtn = $('#auth-submit');
     const statusEl = $('#auth-status');
     let mode = 'signin';
+
+    if (!form) return;
 
     modeToggle.addEventListener('click', () => {
       mode = mode === 'signin' ? 'signup' : 'signin';
@@ -139,6 +138,7 @@
     $('#attic-app').classList.remove('hidden');
     $('#growth-count').textContent = profile.visit_count || 1;
     loadEntries();
+    checkDeliveredLetters();
   }
 
   function initSignOut() {
@@ -154,11 +154,11 @@
   }
 
   /* ============ The Fireplace (ephemeral, never sent anywhere) ============ */
-
   function initFireplace() {
     const textarea = $('#fireplace-input');
     const burnBtn = $('#fireplace-burn');
     const stage = $('#fireplace-stage');
+    if (!textarea || !burnBtn || !stage) return;
 
     burnBtn.addEventListener('click', () => {
       const text = textarea.value.trim();
@@ -182,9 +182,9 @@
   }
 
   /* ============ The Keepsake Box (encrypted CRUD) ============ */
-
   async function loadEntries() {
     const list = $('#keepsake-list');
+    if (!list) return;
     list.innerHTML = '<p class="fineprint">Opening the box…</p>';
     const { data, error } = await supa.from('entries').select('*').order('created_at', { ascending: false });
     if (error) { list.innerHTML = `<p class="fineprint">Couldn't load entries: ${error.message}</p>`; return; }
@@ -222,6 +222,7 @@
   function initKeepsakeForm() {
     const textarea = $('#keepsake-input');
     const saveBtn = $('#keepsake-save');
+    if (!textarea || !saveBtn) return;
     saveBtn.addEventListener('click', async () => {
       const text = textarea.value.trim();
       if (!text) return;
@@ -235,7 +236,6 @@
   }
 
   /* ============ Pack Your Bags (export) ============ */
-
   function download(filename, content, mime) {
     const blob = new Blob([content], { type: mime });
     const url = URL.createObjectURL(blob);
@@ -246,13 +246,17 @@
   }
 
   function initExport() {
-    $('#export-txt').addEventListener('click', () => {
+    const txtBtn = $('#export-txt');
+    const pdfBtn = $('#export-pdf');
+    if (!txtBtn || !pdfBtn) return;
+
+    txtBtn.addEventListener('click', () => {
       const entries = window.__sukoonDecryptedEntries || [];
       const text = entries.map(e => `${new Date(e.date).toLocaleString()}\n${e.text}\n`).join('\n---\n\n');
       download('sukoon-keepsake-box.txt', text || 'Nothing kept yet.', 'text/plain');
     });
 
-    $('#export-pdf').addEventListener('click', async () => {
+    pdfBtn.addEventListener('click', async () => {
       const btn = $('#export-pdf');
       btn.disabled = true;
       btn.textContent = 'Packing…';
@@ -288,12 +292,12 @@
   }
 
   /* ============ The Overthinker's Desk ============ */
-
   function initOverthinkerDesk() {
     const fileInput = $('#overthink-file');
     const textInput = $('#overthink-text');
     const submitBtn = $('#overthink-submit');
     const resultBox = $('#overthink-result');
+    if (!fileInput || !textInput || !submitBtn || !resultBox) return;
 
     function fileToBase64(file) {
       return new Promise((resolve, reject) => {
@@ -347,18 +351,289 @@
     });
   }
 
-  /* ============ Init ============ */
+  /* ============ Dust Particles Animation ============ */
+  function initDustParticles() {
+    const canvas = $('#dust-canvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
 
-  document.addEventListener('DOMContentLoaded', async () => {
-    if (!isConfigured()) {
-      $('#attic-not-connected').classList.remove('hidden');
-      $('#attic-locked').classList.add('hidden');
+    let width = (canvas.width = canvas.offsetWidth || window.innerWidth);
+    let height = (canvas.height = canvas.offsetHeight || window.innerHeight);
+
+    window.addEventListener('resize', () => {
+      width = (canvas.width = canvas.offsetWidth || window.innerWidth);
+      height = (canvas.height = canvas.offsetHeight || window.innerHeight);
+    });
+
+    const particles = [];
+    const maxParticles = 30;
+
+    for (let i = 0; i < maxParticles; i++) {
+      particles.push({
+        x: Math.random() * width,
+        y: Math.random() * height,
+        r: 1 + Math.random() * 2.5,
+        vx: -0.1 + Math.random() * 0.2,
+        vy: -0.05 + Math.random() * 0.15,
+        op: 0.1 + Math.random() * 0.45
+      });
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, width, height);
+
+      const freeze = localStorage.getItem('thermostat_freeze_bg') === 'true' || 
+                     localStorage.getItem('thermostat_no_animations') === 'true';
+
+      particles.forEach(p => {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(217, 195, 168, ${p.op})`;
+        ctx.fill();
+
+        if (!freeze) {
+          p.x += p.vx;
+          p.y += p.vy;
+
+          if (p.x < 0) p.x = width;
+          if (p.x > width) p.x = 0;
+          if (p.y < 0) p.y = height;
+          if (p.y > height) p.y = 0;
+        }
+      });
+
+      requestAnimationFrame(draw);
+    }
+    draw();
+  }
+
+  /* ============ Companion Chat Flow (v4) ============ */
+  function initCompanionChat() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const activeEmotion = urlParams.get('emotion');
+    const companionSpace = $('#companion-space');
+    if (!companionSpace) return;
+
+    if (!activeEmotion) {
+      companionSpace.classList.add('hidden');
       return;
     }
+
+    companionSpace.classList.remove('hidden');
+
+    const log = $('#companion-chat-log');
+    const input = $('#companion-input');
+    const sendBtn = $('#companion-send');
+    const finishBtn = $('#companion-finish');
+    const typing = $('#companion-typing');
+    const ratingSpace = $('#reflection-rating');
+
+    // Add greeting (implementing Emotional Memory opt-in)
+    let greeting = 'Some memories become lighter when someone else sees them.';
+    const weatherHistory = JSON.parse(localStorage.getItem('sukoon_weather_history') || '[]');
+    const feltBefore = weatherHistory.some(w => w.emotion === activeEmotion);
+    if (feltBefore) {
+      greeting += ' I remember this feeling visiting before.';
+    }
+    appendBubble('companion', greeting);
+
+    function appendBubble(sender, text) {
+      const b = document.createElement('div');
+      b.className = `chat-bubble ${sender}`;
+      b.textContent = text;
+      log.appendChild(b);
+      log.scrollTop = log.scrollHeight;
+    }
+
+    // Accidental exit draft handling
+    input.addEventListener('input', () => {
+      window.Sukoon.saveDraft(input.value);
+    });
+
+    document.addEventListener('sukoon-restore-draft', (e) => {
+      if (e.detail) {
+        input.value = e.detail;
+      }
+    });
+
+    async function handleSend() {
+      const text = input.value.trim();
+      if (!text) return;
+
+      appendBubble('user', text);
+      input.value = '';
+      window.Sukoon.clearDraft(); // clear since sent
+      sendBtn.disabled = true;
+      typing.classList.remove('hidden');
+
+      try {
+        const res = await fetch('/api/generate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            type: 'companion',
+            payload: {
+              emotion: activeEmotion,
+              journalText: text
+            }
+          })
+        });
+        const data = await res.json();
+        typing.classList.add('hidden');
+        if (data.ok && data.data && data.data.text) {
+          appendBubble('companion', data.data.text);
+        } else {
+          appendBubble('companion', 'I spent a little time with your words. Let’s sit here together.');
+        }
+      } catch (e) {
+        typing.classList.add('hidden');
+        appendBubble('companion', 'I spent a little time with your words. Thank you for trusting this space.');
+      } finally {
+        sendBtn.disabled = false;
+      }
+    }
+
+    sendBtn.addEventListener('click', handleSend);
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') handleSend();
+    });
+
+    finishBtn.addEventListener('click', () => {
+      companionSpace.classList.add('hidden');
+      ratingSpace.classList.remove('hidden');
+      window.Sukoon.clearDraft();
+    });
+
+    // Rating selections
+    $$('.weather-rating-card', ratingSpace).forEach(card => {
+      card.addEventListener('click', () => {
+        const weather = card.dataset.weather;
+        saveWeatherRating(activeEmotion || 'Attic', weather);
+
+        ratingSpace.innerHTML = `
+          <div class="card">
+            <h2 class="display-sm" style="font-size:1.2rem; margin-bottom:12px;">Thank you for reflecting with me.</h2>
+            <p class="lede lede-sm">Some thoughts aren't meant to be carried forever. I hope you feel a little lighter now.</p>
+            <button class="btn btn-primary" id="done-ref-btn" style="margin-top:16px;">Finish</button>
+          </div>
+        `;
+        
+        $('#done-ref-btn').addEventListener('click', () => {
+          window.location.href = window.location.pathname;
+        });
+      });
+    });
+
+    const closeBtn = $('#rating-close-btn');
+    if (closeBtn) {
+      closeBtn.addEventListener('click', () => {
+        window.location.href = window.location.pathname;
+      });
+    }
+  }
+
+  function saveWeatherRating(emotion, weather) {
+    const list = JSON.parse(localStorage.getItem('sukoon_weather_history') || '[]');
+    list.push({
+      date: new Date().toISOString(),
+      room: 'Attic',
+      emotion: emotion,
+      weather: weather
+    });
+    localStorage.setItem('sukoon_weather_history', JSON.stringify(list));
+
+    // Water plant
+    let plantVisits = parseInt(localStorage.getItem('sukoon_plant_visits') || '0', 10);
+    localStorage.setItem('sukoon_plant_visits', plantVisits + 1);
+  }
+
+  /* ============ Letter to Future Self (v4) ============ */
+  function initFutureLetters() {
+    const input = $('#future-letter-input');
+    const saveBtn = $('#future-letter-save');
+    const status = $('#future-letter-status');
+    const monthsSelect = $('#future-letter-time');
+
+    if (!saveBtn || !input) return;
+
+    saveBtn.addEventListener('click', () => {
+      const text = input.value.trim();
+      if (!text) return;
+
+      const months = parseInt(monthsSelect.value, 10);
+      const deliveryDate = new Date();
+      deliveryDate.setMonth(deliveryDate.getMonth() + months);
+
+      // Save locally (or encrypt using Attic key if signed in)
+      const letterObj = {
+        id: crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).slice(2),
+        date: new Date().toISOString(),
+        deliverAt: deliveryDate.toISOString(),
+        text: text
+      };
+
+      const letters = JSON.parse(localStorage.getItem('sukoon_future_letters') || '[]');
+      letters.push(letterObj);
+      localStorage.setItem('sukoon_future_letters', JSON.stringify(letters));
+
+      input.value = '';
+      status.textContent = `Your letter has been locked and saved. It will quietly wait here for you until ${deliveryDate.toLocaleDateString()}.`;
+      checkDeliveredLetters();
+    });
+  }
+
+  function checkDeliveredLetters() {
+    const container = $('#delivered-letters');
+    if (!container) return;
+
+    const letters = JSON.parse(localStorage.getItem('sukoon_future_letters') || '[]');
+    const now = new Date();
+
+    const delivered = letters.filter(l => new Date(l.deliverAt) <= now);
+    const pendingCount = letters.length - delivered.length;
+
+    let html = '';
+    if (delivered.length > 0) {
+      html += `<h3 class="display-sm" style="font-size:1.1rem; margin-top:20px;">Letters Delivered:</h3>`;
+      delivered.forEach(l => {
+        html += `
+          <div class="card" style="margin-top:12px; background:var(--surface-soft); border:1px solid var(--line);">
+            <div class="entry-meta">Written on ${new Date(l.date).toLocaleDateString()} — Delivered on ${new Date(l.deliverAt).toLocaleDateString()}</div>
+            <p style="margin-top:8px; font-style:italic;">"${l.text}"</p>
+          </div>
+        `;
+      });
+    }
+
+    if (pendingCount > 0) {
+      html += `
+        <p class="fineprint" style="margin-top:14px; font-style:italic;">
+          📬 You have ${pendingCount} private letter(s) waiting in the future.
+        </p>
+      `;
+    }
+
+    container.innerHTML = html;
+  }
+
+  /* ============ Page Init ============ */
+  document.addEventListener('DOMContentLoaded', async () => {
+    initDustParticles();
+    initCompanionChat();
+    initFireplace();
+    initFutureLetters();
+
+    if (!isConfigured()) {
+      const note = $('#attic-not-connected');
+      if (note) note.classList.remove('hidden');
+      const locked = $('#attic-locked');
+      if (locked) locked.classList.add('hidden');
+      return;
+    }
+
     supa = initSupabase();
     initAuthForm();
     initSignOut();
-    initFireplace();
     initKeepsakeForm();
     initExport();
     initOverthinkerDesk();
@@ -372,10 +647,10 @@
         const profile = await ensureProfile(session.user.id);
         showAtticApp(profile);
       } else {
-        // session exists but we lost the derived key (new tab/browser restart);
-        // ask them to sign in again so we can re-derive it from the password
         await supa.auth.signOut();
       }
+    } else {
+      checkDeliveredLetters(); // Non-authed users can also see local offline letters
     }
   });
 })();

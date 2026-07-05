@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Safe Room — Sukoon</title>
+<meta name="description" content="A quiet retreat featuring The Window and The Empty Chair. No expectations, no rush.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Lora:ital@0;1&family=Quicksand:wght@500;600;700&family=Nunito:wght@400;600&display=swap" rel="stylesheet">
+<link rel="icon" type="image/jpeg" href="assets/logo.jpeg">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<div class="breath-bg" aria-hidden="true">
+  <span class="orb orb-a"></span>
+  <span class="orb orb-b"></span>
+  <span class="orb orb-c"></span>
+</div>
+
+<header class="site-header">
+  <a href="/" class="brand"><span class="brand-mark" aria-hidden="true"><img src="assets/logo.jpeg" alt="" class="brand-mark-img"></span>Sukoon</a>
+  <div class="header-actions">
+    <button class="mini-toggle sun-moon-toggle" aria-label="Toggle night mode" aria-pressed="false">☀️</button>
+    <button class="mini-toggle sensory-toggle" aria-label="Toggle low-sensory, calmer mode" aria-pressed="false">🌿</button>
+  </div>
+</header>
+
+<main>
+  <section class="page-section">
+    <div class="wrap center">
+      <p class="eyebrow">the safe room</p>
+      <h1 class="display-sm">A place to rest without expectations.</h1>
+      <p class="lede lede-sm">Sometimes healing begins with being asked nothing at all. Choose the space that supports you right now.</p>
+    </div>
+
+    <!-- Mode Selector Cards -->
+    <div class="wrap" style="margin-top: 36px;" id="mode-selector-wrap">
+      <div class="mood-grid" style="grid-template-columns: 1fr 1fr; max-width: 680px; margin: 0 auto;">
+        <button class="mood-card" id="select-window" style="width:100%; border:1px solid var(--line); font-family:inherit;">
+          <span class="mood-emoji">🪟</span>
+          <span style="font-size:1.1rem; display:block; margin-top:8px;">The Window</span>
+          <span style="font-size:0.8rem; font-weight:normal; color:var(--ink-soft); display:block; margin-top:4px;">For when you cannot talk. Simply sit and watch peaceful scenes.</span>
+        </button>
+        <button class="mood-card" id="select-chair" style="width:100%; border:1px solid var(--line); font-family:inherit;">
+          <span class="mood-emoji">🪑</span>
+          <span style="font-size:1.1rem; display:block; margin-top:8px;">The Empty Chair</span>
+          <span style="font-size:0.8rem; font-weight:normal; color:var(--ink-soft); display:block; margin-top:4px;">Address someone directly. Type without interruptions or limits.</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- 1. THE WINDOW MODE -->
+    <div class="wrap hidden" id="window-mode-container" style="margin-top: 36px;">
+      <div class="card" style="text-align:left;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:18px;">
+          <div>
+            <h2 class="display-sm" style="font-size:1.25rem;">The Window</h2>
+            <p class="lede lede-sm" style="margin-top:2px;">No typing. No AI. Just peaceful views and sounds.</p>
+          </div>
+          <button class="btn btn-secondary" id="exit-window-mode" style="min-height:36px; padding:6px 14px; font-size:0.85rem;">Back to Selector</button>
+        </div>
+
+        <div class="safe-room-layout">
+          <div class="window-scenes-nav">
+            <button class="scene-nav-btn active" data-scene="rain">🌧️ Rain</button>
+            <button class="scene-nav-btn" data-scene="ocean">🌊 Ocean</button>
+            <button class="scene-nav-btn" data-scene="forest">🌲 Forest</button>
+            <button class="scene-nav-btn" data-scene="train">🚂 Train window</button>
+            <button class="scene-nav-btn" data-scene="campfire">🔥 Campfire</button>
+            <button class="scene-nav-btn" data-scene="sky">🌌 Night sky</button>
+            <button class="btn btn-ghost" id="mute-window-sound" style="margin-top:14px; border:1px solid var(--line); justify-content:flex-start;">🔊 Mute Sound</button>
+          </div>
+
+          <div class="window-canvas-container">
+            <canvas class="window-canvas" id="window-canvas"></canvas>
+            <div class="window-overlay-text" id="window-overlay-desc">Rain sliding down a window pane...</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. THE EMPTY CHAIR MODE -->
+    <div class="wrap hidden" id="chair-mode-container" style="margin-top: 36px;">
+      <div class="card" style="text-align:left;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:18px;">
+          <div>
+            <h2 class="display-sm" style="font-size:1.25rem;">The Empty Chair</h2>
+            <p class="lede lede-sm" style="margin-top:2px;">Type whatever you need to say to them. You will not be interrupted.</p>
+          </div>
+          <button class="btn btn-secondary" id="exit-chair-mode" style="min-height:36px; padding:6px 14px; font-size:0.85rem;">Back to Selector</button>
+        </div>
+
+        <!-- Step 1: Choose Whom -->
+        <div id="chair-setup">
+          <p class="lede lede-sm" style="margin-bottom:16px;">Who would you like to speak to?</p>
+          <div class="mood-grid" style="grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); margin-bottom:20px;">
+            <button class="btn btn-secondary chair-person-btn" data-person="Mother">Mother</button>
+            <button class="btn btn-secondary chair-person-btn" data-person="Father">Father</button>
+            <button class="btn btn-secondary chair-person-btn" data-person="Friend">Friend</button>
+            <button class="btn btn-secondary chair-person-btn" data-person="Ex">Ex</button>
+            <button class="btn btn-secondary chair-person-btn" data-person="Future Self">Future Self</button>
+            <button class="btn btn-secondary chair-person-btn" data-person="Childhood Self">Childhood Self</button>
+            <button class="btn btn-secondary chair-person-btn" data-person="Someone who passed away">Someone who passed</button>
+            <button class="btn btn-secondary chair-person-btn" data-person="Someone I'll never meet again">Someone I'll never meet</button>
+          </div>
+        </div>
+
+        <!-- Step 2: Talk -->
+        <div class="hidden" id="chair-workspace">
+          <div class="empty-chair-grid">
+            <div class="empty-chair-graphic">
+              <!-- Outline drawing of a wooden chair -->
+              <svg class="chair-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                <path d="M35 80 L35 45 L65 45 L65 80 M35 45 L35 15 L65 15 L65 45 M35 25 L65 25 M35 35 L65 35 M30 85 L35 80 M70 85 L65 80 M35 55 L65 55" />
+              </svg>
+            </div>
+            <div>
+              <p class="eyebrow" id="chair-speaking-to" style="margin-bottom:8px;">speaking to: mother</p>
+              <textarea class="textarea-input" id="chair-input" placeholder="Type whatever you've been carrying. Take your time..." style="min-height: 200px;"></textarea>
+              <div style="display:flex; justify-content:flex-end; gap:12px; margin-top:14px;">
+                <button class="btn btn-primary" id="chair-submit">I've said what I needed to say</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 3: Reflection -->
+        <div class="hidden" id="chair-reflection">
+          <p class="eyebrow" style="margin-bottom:12px;">a gentle reflection</p>
+          <div id="chair-reflection-text" style="font-size:1.02rem; line-height:1.75; font-family:Georgia, serif; color:var(--ink);"></div>
+          <div style="display:flex; justify-content:flex-end; margin-top:20px;">
+            <button class="btn btn-primary" id="chair-reset">Reset Chair</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <nav>
+    <a href="/">The Foyer</a>
+    <a href="garden.html">The Garden</a>
+    <a href="attic.html">The Attic</a>
+    <a href="living-room.html">The Living Room</a>
+    <a href="safe-room.html">The Safe Room</a>
+    <a href="haven.html">The Haven</a>
+    <a href="about.html">The Foundation</a>
+    <a href="crisis.html">First Aid Kit</a>
+  </nav>
+  <p>Sukoon is a caring companion, not a licensed therapist, and not a substitute for professional or emergency care. If you're in immediate danger, please contact local emergency services.</p>
+</footer>
+
+<div class="floating-controls fc-bottom-right">
+  <a href="crisis.html" class="porch-light" aria-label="Porch Light: get crisis support resources now"><span aria-hidden="true">🕯️</span><span class="label">Porch Light</span></a>
+</div>
+<div class="floating-controls fc-bottom-left">
+  <button class="quick-exit" aria-label="Slip out the back: leave this site instantly"><span aria-hidden="true">🚪</span><span class="label">Slip out the back</span></button>
+</div>
+
+<script src="js/global.js"></script>
+<script src="js/safe-room.js"></script>
+</body>
+</html>
