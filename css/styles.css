@@ -5,23 +5,23 @@
 
 :root {
   /* Foundations: Sukoon v5 Color Palette (Simplified) */
-  --parchment: #FAF6F0;       /* Warm Cream */
-  --parchment-deep: #EAE5DC;  /* Warm Beige */
-  --surface: #FDFDFB;         /* Soft Off-White */
-  --surface-soft: #F9F7F2;
-  --ink: #2C3E50;             /* Slate Twilight Typography */
-  --ink-soft: #4A5B6B;
-  --ink-faint: #7F8E9C;
-  --line: #E2DDD5;
+  --parchment: #FAF5F1;       /* Very Soft Warm Cream background */
+  --parchment-deep: #DEC8B5;  /* Exact Warm Tan Logo background */
+  --surface: #FDFBFA;         /* Soft readable off-white */
+  --surface-soft: #F6EEE8;
+  --ink: #3B2D29;             /* espresso brown from logo text shadow */
+  --ink-soft: #5C4B46;
+  --ink-faint: #8E7A74;
+  --line: #E7D9D0;
 
-  --rust: #9AA88B;            /* Sage Green */
-  --rust-deep: #7E8D70;
-  --rust-hover: #EAE5DC;      /* Warm Beige Hover */
+  --rust: #A0473C;            /* Logo Terracotta Brick-Red */
+  --rust-deep: #843229;
+  --rust-hover: #F6EEE8;      /* Warm hover tone */
   
-  --green: #9AA88B;           /* Sage Green */
-  --teal: #859CAF;            /* Soft Blue */
-  --blue: #859CAF;            /* Soft Blue */
-  --gold: #EAE5DC;            /* Warm Beige */
+  --green: #50764D;           /* Logo Peacock Feather Green */
+  --teal: #004F5E;            /* Logo Peacock Feather Deep Teal Core */
+  --blue: #00808B;            /* Logo Peacock Feather Turquoise Blue */
+  --gold: #DEC8B5;            /* Logo Tan background */
 
   --shadow-soft: 0 10px 30px -15px rgba(44, 62, 80, 0.08);
   --shadow-lift: 0 5px 15px -8px rgba(44, 62, 80, 0.05);
@@ -38,25 +38,25 @@
   --line-height-body: 1.75;
 }
 
-/* Night theme variables (Subdued Bedside Lamp) */
+/* Night theme variables (Subdued Espresso Bedside Lamp) */
 [data-theme="night"] {
-  --parchment: #12181F;
-  --parchment-deep: #0D1218;
-  --surface: #18202A;
-  --surface-soft: #1E2835;
-  --ink: #EAECEE;
-  --ink-soft: #ABB2B9;
-  --ink-faint: #7F8C8D;
-  --line: #222F3E;
-  --rust: #859CAF;
-  --rust-deep: #5A6D7D;
-  --rust-hover: #1E2835;
-  --green: #859CAF;
-  --teal: #788A9C;
-  --blue: #788A9C;
-  --gold: #1E2835;
-  --shadow-soft: 0 10px 30px rgba(0, 0, 0, 0.35);
-  --shadow-lift: 0 5px 15px rgba(0, 0, 0, 0.25);
+  --parchment: #1D1513;        /* Deep espresso bean background */
+  --parchment-deep: #140E0C;   /* Even darker espresso background */
+  --surface: #281D1A;          /* Warm dark brown card surface */
+  --surface-soft: #332622;
+  --ink: #F7EEEB;              /* Off-white warm text */
+  --ink-soft: #DEC8B5;         /* Soft tan metadata */
+  --ink-faint: #9E837E;
+  --line: #42302C;
+  --rust: #E26859;             /* Lighter brick-red for visibility in dark */
+  --rust-deep: #C74F41;
+  --rust-hover: #332622;
+  --green: #81A87D;            /* Desaturated feather green */
+  --teal: #338C9E;             /* Desaturated feather turquoise */
+  --blue: #338C9E;
+  --gold: #DEC8B5;
+  --shadow-soft: 0 10px 30px rgba(0, 0, 0, 0.45);
+  --shadow-lift: 0 5px 15px rgba(0, 0, 0, 0.35);
 }
 
 * { box-sizing: border-box; }
