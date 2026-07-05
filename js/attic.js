@@ -267,12 +267,43 @@
     draw();
   }
 
+  function initFireplace() {
+    const textarea = $('#fireplace-input');
+    const burnBtn = $('#fireplace-burn');
+    const stage = $('#fireplace-stage');
+    if (!textarea || !burnBtn || !stage) return;
+
+    burnBtn.addEventListener('click', () => {
+      const text = textarea.value.trim();
+      if (!text) return;
+      
+      const chars = text.split('');
+      stage.innerHTML = chars.map(ch => {
+        const delay = (Math.random() * 1.2).toFixed(2);
+        const dx = (Math.random() * 60 - 30).toFixed(0);
+        const display = ch === ' ' ? '&nbsp;' : ch;
+        return `<span class="ash-char" style="--d:${delay}s; --dx:${dx}">${display}</span>`;
+      }).join('');
+      
+      stage.classList.add('is-burning');
+      textarea.value = '';
+      textarea.disabled = true;
+      
+      setTimeout(() => {
+        stage.innerHTML = '';
+        stage.classList.remove('is-burning');
+        textarea.disabled = false;
+      }, 2600);
+    });
+  }
+
   /* ============ Page Init ============ */
   document.addEventListener('DOMContentLoaded', async () => {
     initDustParticles();
     initAuthForm();
     initSignOut();
     initKeepsakeForm();
+    initFireplace();
 
     const key = await loadSessionKey();
     if (key) {
