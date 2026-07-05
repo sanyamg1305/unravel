@@ -4,17 +4,7 @@
   const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
 
   const SESSION_KEY_STORAGE = 'sukoon_derived_key';
-  let supa = null;
-  let currentUser = null;
-
-  function isConfigured() {
-    return !!(window.SUKOON_SUPABASE && window.SUKOON_SUPABASE.url && window.SUKOON_SUPABASE.anonKey);
-  }
-
-  function initSupabase() {
-    if (!isConfigured() || !window.supabase) return null;
-    return window.supabase.createClient(window.SUKOON_SUPABASE.url, window.SUKOON_SUPABASE.anonKey);
-  }
+  let encryptionKey = null;
 
   /* ============ Encryption (WebCrypto AES-GCM) ============ */
   function b64encode(buf) {
@@ -29,7 +19,7 @@
     const salt = b64decode(saltB64);
     const baseKey = await crypto.subtle.importKey('raw', enc.encode(password), 'PBKDF2', false, ['deriveKey']);
     return crypto.subtle.deriveKey(
-      { name: 'PBKDF2', salt, iterations: 150000, hash: 'SHA-256' },
+      { name: 'PBKDF2', salt, iterations: 100000, hash: 'SHA-256' },
       baseKey,
       { name: 'AES-GCM', length: 256 },
       true,
@@ -62,86 +52,70 @@
     return crypto.subtle.importKey('raw', raw, 'AES-GCM', true, ['encrypt', 'decrypt']);
   }
 
-  let encryptionKey = null;
+  /* ============ Local Unlock & Auth ============ */
+  async function handleUnlock(passphrase) {
+    let salt = localStorage.getItem('sukoon_keepsake_salt');
+    if (!salt) {
+      salt = b64encode(crypto.getRandomValues(new Uint8Array(16)));
+      localStorage.setItem('sukoon_keepsake_salt', salt);
+    }
 
-  /* ============ Profiles and Auth ============ */
-  async function ensureProfile(userId) {
-    const { data } = await supa.from('profiles').select('*').eq('id', userId).maybeSingle();
-    if (data) return data;
-    const salt = b64encode(crypto.getRandomValues(new Uint8Array(16)));
-    const { data: created } = await supa.from('profiles').insert({ id: userId, kdf_salt: salt }).select().single();
-    return created;
-  }
+    try {
+      encryptionKey = await deriveKey(passphrase, salt);
+      await storeSessionKey(encryptionKey);
+      
+      // Let's verify we can decrypt a test string to check if the password is correct!
+      const testEnc = localStorage.getItem('sukoon_keepsake_test');
+      if (testEnc) {
+        const { iv, ciphertext } = JSON.parse(testEnc);
+        await decryptText(encryptionKey, iv, ciphertext);
+      } else {
+        // Create a new test payload to verify password next time
+        const payload = await encryptText(encryptionKey, 'verify-success');
+        localStorage.setItem('sukoon_keepsake_test', JSON.stringify(payload));
+      }
 
-  async function recordVisit(profile) {
-    await supa.from('profiles').update({
-      visit_count: (profile.visit_count || 0) + 1,
-      last_visit_at: new Date().toISOString(),
-    }).eq('id', profile.id);
-  }
+      // Record visit count locally
+      let visits = parseInt(localStorage.getItem('sukoon_attic_visits') || '0', 10);
+      localStorage.setItem('sukoon_attic_visits', visits + 1);
 
-  async function handleAuthed(user, password) {
-    currentUser = user;
-    const profile = await ensureProfile(user.id);
-    encryptionKey = await deriveKey(password, profile.kdf_salt);
-    await storeSessionKey(encryptionKey);
-    await recordVisit(profile);
-    showAtticApp(profile);
+      showAtticApp();
+    } catch (err) {
+      $('#auth-status').textContent = 'Incorrect passphrase. Please try again.';
+      sessionStorage.removeItem(SESSION_KEY_STORAGE);
+      encryptionKey = null;
+    }
   }
 
   function initAuthForm() {
     const form = $('#auth-form');
-    const emailInput = $('#auth-email');
     const passwordInput = $('#auth-password');
-    const modeToggle = $('#auth-mode-toggle');
-    const submitBtn = $('#auth-submit');
     const statusEl = $('#auth-status');
-    let mode = 'signin';
 
     if (!form) return;
 
-    modeToggle.addEventListener('click', () => {
-      mode = mode === 'signin' ? 'signup' : 'signin';
-      submitBtn.textContent = mode === 'signin' ? 'Come in' : 'Create my Attic';
-      modeToggle.textContent = mode === 'signin' ? "New here? Create an account instead" : 'Already have an account? Sign in instead';
-    });
-
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
-      statusEl.textContent = 'One moment…';
-      const email = emailInput.value.trim();
+      statusEl.textContent = 'Unlocking Box…';
       const password = passwordInput.value;
-
-      try {
-        if (mode === 'signup') {
-          const { data, error } = await supa.auth.signUp({ email, password });
-          if (error) throw error;
-          if (!data.session) {
-            statusEl.textContent = 'Check your email to confirm your account, then sign in.';
-            return;
-          }
-          await handleAuthed(data.user, password);
-        } else {
-          const { data, error } = await supa.auth.signInWithPassword({ email, password });
-          if (error) throw error;
-          await handleAuthed(data.user, password);
-        }
-      } catch (err) {
-        statusEl.textContent = err.message || 'Something went wrong. Please try again.';
-      }
+      await handleUnlock(password);
     });
   }
 
-  function showAtticApp(profile) {
+  function showAtticApp() {
     $('#attic-locked').classList.add('hidden');
     $('#attic-app').classList.remove('hidden');
     
     const countEl = $('#growth-count');
-    if (countEl) countEl.textContent = profile.visit_count || 1;
+    const visits = localStorage.getItem('sukoon_attic_visits') || '1';
+    if (countEl) countEl.textContent = visits;
 
-    // Show sign out btn in header
+    // Show lock box button in header
     const signOutBtn = $('#attic-signout');
-    if (signOutBtn) signOutBtn.classList.remove('hidden');
+    if (signOutBtn) {
+      signOutBtn.classList.remove('hidden');
+      signOutBtn.textContent = 'Lock Box';
+    }
 
     loadEntries();
   }
@@ -149,11 +123,9 @@
   function initSignOut() {
     const btn = $('#attic-signout');
     if (!btn) return;
-    btn.addEventListener('click', async () => {
+    btn.addEventListener('click', () => {
       sessionStorage.removeItem(SESSION_KEY_STORAGE);
       encryptionKey = null;
-      currentUser = null;
-      await supa.auth.signOut();
       location.reload();
     });
   }
@@ -164,40 +136,44 @@
     if (!list) return;
     list.innerHTML = '<p class="fineprint">Opening the box…</p>';
     
-    const { data, error } = await supa.from('entries').select('*').order('created_at', { ascending: false });
-    
-    if (error) { 
-      list.innerHTML = `<p class="fineprint">Couldn't load entries: ${error.message}</p>`; 
-      return; 
-    }
+    const rawData = localStorage.getItem('sukoon_keepsakes') || '[]';
+    const data = JSON.parse(rawData);
     
     if (!data.length) { 
       list.innerHTML = '<p class="fineprint">Nothing kept yet. Whatever you write down remains private to you.</p>'; 
       return; 
     }
 
-    const rows = await Promise.all(data.map(async (row) => {
+    const rows = [];
+    for (let i = 0; i < data.length; i++) {
+      const row = data[i];
       try {
         const plain = await decryptText(encryptionKey, row.iv, row.ciphertext);
-        return { id: row.id, date: row.created_at, text: plain };
+        rows.push({ index: i, date: row.created_at, text: plain });
       } catch (e) {
-        return { id: row.id, date: row.created_at, text: '[could not decrypt with this session\'s key]' };
+        rows.push({ index: i, date: row.created_at, text: '[could not decrypt: invalid key]' });
       }
-    }));
+    }
 
-    list.innerHTML = rows.map(r => `
+    // Sort newest first
+    const sorted = rows.reverse();
+
+    list.innerHTML = sorted.map(r => `
       <div class="entry-row" style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--line); padding:16px 0; gap:12px;">
         <div style="flex:1;">
           <div class="entry-meta" style="font-size:0.8rem; color:var(--ink-faint);">${new Date(r.date).toLocaleString()}</div>
           <div style="font-size:1.02rem; color:var(--ink); margin-top:4px; white-space:pre-wrap;">${r.text}</div>
         </div>
-        <button class="entry-delete btn btn-ghost" data-id="${r.id}" style="padding:6px; min-height:36px; min-width:36px; font-size:0.85rem;">Let this go</button>
+        <button class="entry-delete btn btn-ghost" data-index="${r.index}" style="padding:6px; min-height:36px; min-width:36px; font-size:0.85rem;">Let this go</button>
       </div>
     `).join('');
 
     $$('.entry-delete', list).forEach(btn => {
-      btn.addEventListener('click', async () => {
-        await supa.from('entries').delete().eq('id', btn.dataset.id);
+      btn.addEventListener('click', () => {
+        const idx = parseInt(btn.dataset.index, 10);
+        const entries = JSON.parse(localStorage.getItem('sukoon_keepsakes') || '[]');
+        entries.splice(idx, 1);
+        localStorage.setItem('sukoon_keepsakes', JSON.stringify(entries));
         loadEntries();
       });
     });
@@ -217,7 +193,13 @@
 
       try {
         const { iv, ciphertext } = await encryptText(encryptionKey, text);
-        await supa.from('entries').insert({ user_id: currentUser.id, iv, ciphertext });
+        const entries = JSON.parse(localStorage.getItem('sukoon_keepsakes') || '[]');
+        entries.push({
+          iv,
+          ciphertext,
+          created_at: new Date().toISOString()
+        });
+        localStorage.setItem('sukoon_keepsakes', JSON.stringify(entries));
         textarea.value = '';
         loadEntries();
       } catch (e) {
@@ -229,7 +211,7 @@
     });
   }
 
-  /* ============ Dust Particles Animation (Calmed down) ============ */
+  /* ============ Dust Particles Animation ============ */
   function initDustParticles() {
     const canvas = $('#dust-canvas');
     if (!canvas) return;
@@ -244,14 +226,14 @@
     });
 
     const particles = [];
-    const maxParticles = 15; // Reduced density
+    const maxParticles = 15;
 
     for (let i = 0; i < maxParticles; i++) {
       particles.push({
         x: Math.random() * width,
         y: Math.random() * height,
         r: 1 + Math.random() * 1.5,
-        vx: -0.05 + Math.random() * 0.1, // Slower drift
+        vx: -0.05 + Math.random() * 0.1,
         vy: -0.02 + Math.random() * 0.08,
         op: 0.05 + Math.random() * 0.25
       });
@@ -288,31 +270,14 @@
   /* ============ Page Init ============ */
   document.addEventListener('DOMContentLoaded', async () => {
     initDustParticles();
-
-    if (!isConfigured()) {
-      const note = $('#attic-not-connected');
-      if (note) note.classList.remove('hidden');
-      const locked = $('#attic-locked');
-      if (locked) locked.classList.add('hidden');
-      return;
-    }
-
-    supa = initSupabase();
     initAuthForm();
     initSignOut();
     initKeepsakeForm();
 
-    const { data: { session } } = await supa.auth.getSession();
-    if (session) {
-      const key = await loadSessionKey();
-      if (key) {
-        encryptionKey = key;
-        currentUser = session.user;
-        const profile = await ensureProfile(session.user.id);
-        showAtticApp(profile);
-      } else {
-        await supa.auth.signOut();
-      }
+    const key = await loadSessionKey();
+    if (key) {
+      encryptionKey = key;
+      showAtticApp();
     }
   });
 })();

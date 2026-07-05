@@ -47,72 +47,20 @@
       <p class="lede lede-sm">Everything you keep here is encrypted on your own device before it's ever saved. What happens in the Attic stays in the Attic.</p>
     </div>
 
-    <!-- Not connected to a backend yet -->
-    <div class="wrap wrap-narrow hidden" id="attic-not-connected">
-      <div class="not-connected-note">
-        The Attic needs a Supabase project to store your account and encrypted entries. Create a free one at
-        <code>supabase.com</code>, run <code>supabase/schema.sql</code> in its SQL editor, then add your project URL and anon key
-        to <code>js/supabase-config.js</code>.
-      </div>
-    </div>
-
-    <!-- Companion Space -->
-    <div class="wrap wrap-narrow hidden" id="companion-space" style="margin-top:36px;">
-      <div class="card companion-card">
-        <h2 class="display-sm" style="font-size:1.2rem; margin-bottom:8px;">A Quiet Companion</h2>
-        <div class="chat-log" id="companion-chat-log"></div>
-        <div class="typing-indicator hidden" id="companion-typing"><span></span><span></span><span></span></div>
-        <div style="display:flex; gap:10px; margin-top:10px;">
-          <input class="text-input" id="companion-input" placeholder="Type whatever is in your head right now…" style="flex:1;">
-          <button class="btn btn-primary" id="companion-send">Send</button>
-        </div>
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:14px;">
-          <p class="fineprint" style="font-style:italic;">Your words stay only here, and are never saved or sent to advertising networks.</p>
-          <button class="btn btn-secondary" id="companion-finish" style="padding: 6px 14px; min-height: 36px; font-size: 0.85rem;">I'm ready to step away</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Rating Screen -->
-    <div class="wrap wrap-narrow hidden" id="reflection-rating" style="margin-top:36px;">
-      <div class="card reflection-rating-overlay">
-        <h2 class="display-sm" style="font-size:1.25rem; margin-bottom:8px;">Does the weight feel any different now?</h2>
-        <p class="lede lede-sm">How does your weather feel right now?</p>
-        <div class="weather-rating-grid">
-          <div class="weather-rating-card" data-weather="Heavy Rain">
-            <span class="weather-icon">🌧️</span><span>Heavy Rain</span>
-          </div>
-          <div class="weather-rating-card" data-weather="Fog">
-            <span class="weather-icon">🌫️</span><span>Fog</span>
-          </div>
-          <div class="weather-rating-card" data-weather="Cloudy">
-            <span class="weather-icon">☁️</span><span>Cloudy</span>
-          </div>
-          <div class="weather-rating-card" data-weather="Gentle Breeze">
-            <span class="weather-icon">🌬️</span><span>Gentle Breeze</span>
-          </div>
-          <div class="weather-rating-card" data-weather="Clear Morning">
-            <span class="weather-icon">☀️</span><span>Clear Morning</span>
-          </div>
-        </div>
-        <button class="btn btn-secondary" id="rating-close-btn">Close</button>
-      </div>
-    </div>
-
-    <!-- Locked: sign in / sign up -->
+    <!-- Locked: enter local passphrase -->
     <div class="wrap wrap-narrow" id="attic-locked">
-      <form class="card auth-card" id="auth-form">
+      <form class="card auth-card" id="auth-form" style="text-align: left; display: flex; flex-direction: column; gap: 20px;">
+        <h2 class="display-sm" style="font-size:1.3rem;">Unlock your Keepsake Box</h2>
+        <p class="lede lede-sm" style="max-width: 100%;">Set or enter a passphrase to encrypt your entries locally on your own browser storage. Since there is no server, your passphrase never leaves your device. If you forget it, your entries cannot be recovered.</p>
+        
         <div>
-          <label class="field-label" for="auth-email">Email</label>
-          <input class="text-input" type="email" id="auth-email" required autocomplete="email">
+          <label class="field-label" for="auth-password" style="font-weight: 600; margin-bottom: 8px;">Passphrase</label>
+          <input class="text-input" type="password" id="auth-password" required minlength="4" placeholder="Enter your passphrase...">
         </div>
-        <div>
-          <label class="field-label" for="auth-password">Password</label>
-          <input class="text-input" type="password" id="auth-password" required minlength="8" autocomplete="current-password">
-          <p class="fineprint" style="margin-top:6px;">This password also unlocks the encryption on your entries. If you forget it, we cannot recover what's saved, by design.</p>
+        
+        <div style="display:flex; justify-content:flex-end;">
+          <button class="btn btn-primary" type="submit" id="auth-submit">Unlock Box</button>
         </div>
-        <button class="btn btn-primary btn-lg" type="submit" id="auth-submit">Come in</button>
-        <button class="link-btn" type="button" id="auth-mode-toggle">New here? Create an account instead</button>
         <p class="fineprint" id="auth-status"></p>
       </form>
     </div>
@@ -161,8 +109,6 @@
 </div>
 
 <script src="js/global.js"></script>
-<script src="js/supabase-config.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script src="js/attic.js"></script>
 </body>
 </html>
