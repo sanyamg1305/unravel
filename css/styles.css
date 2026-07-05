@@ -147,6 +147,8 @@ textarea:focus-visible, select:focus-visible, [tabindex]:focus-visible {
 
 /* Unified Centered Navigation Header */
 .site-header {
+  position: relative;
+  z-index: 5;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -243,29 +245,7 @@ textarea:focus-visible, select:focus-visible, [tabindex]:focus-visible {
 }
 .card:hover { box-shadow: var(--shadow-soft); } /* Flattened: no translational hover lift */
 
-/* ============ Header ============ */
-.site-header {
-  position: relative;
-  z-index: 5;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 24px;
-  max-width: 1100px;
-  margin: 0 auto;
-}
-.brand {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  background: none;
-  border: none;
-  font-family: 'Playfair Display', serif;
-  font-size: 1.3rem;
-  color: var(--ink);
-  min-height: var(--touch-min);
-  padding: 6px 10px;
-}
+
 .brand-mark {
   width: 40px; height: 40px;
   border-radius: 50%;
@@ -1417,5 +1397,46 @@ textarea:focus-visible, select:focus-visible, [tabindex]:focus-visible {
 .thermostat-checkbox-item input {
   width: 18px; height: 18px;
   cursor: pointer;
+}
+
+/* ============ Mobile Viewport Optimizations ============ */
+@media (max-width: 768px) {
+  .site-header {
+    padding: 24px 16px;
+    gap: 16px;
+  }
+  .main-nav {
+    gap: 12px 16px;
+  }
+  .main-nav a {
+    font-size: 0.92rem;
+    padding: 2px 4px;
+  }
+  .page-section {
+    padding: 40px 16px 60px;
+  }
+  .card {
+    padding: 24px;
+    border-radius: var(--radius-md);
+  }
+  .center {
+    gap: 24px;
+  }
+  .mood-grid {
+    gap: 16px !important;
+    margin-top: 12px !important;
+  }
+  .library-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .mood-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .brand {
+    font-size: 1.25rem;
+  }
 }
 
