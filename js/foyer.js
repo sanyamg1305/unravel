@@ -257,9 +257,140 @@
     localStorage.setItem('sukoon_plant_visits', plantVisits + 1);
   }
 
+  const MOODS_DATABASE = {
+    // Sadness / Heavy
+    "depressed": "living-room.html?emotion=Sad",
+    "gloomy": "living-room.html?emotion=Sad",
+    "melancholy": "living-room.html?emotion=Sad",
+    "despondent": "living-room.html?emotion=Sad",
+    "heartbroken": "living-room.html?emotion=Sad",
+    "sorrowful": "living-room.html?emotion=Sad",
+    "blue": "living-room.html?emotion=Sad",
+    "disappointed": "living-room.html?emotion=Sad",
+    "hurt": "living-room.html?emotion=Sad",
+    "tearful": "living-room.html?emotion=Sad",
+    "exhausted": "living-room.html?emotion=Sad",
+    "hopeless": "living-room.html?emotion=Sad",
+    "regretful": "living-room.html?emotion=Sad",
+    "dejected": "living-room.html?emotion=Sad",
+    "weary": "living-room.html?emotion=Sad",
+    "defeated": "living-room.html?emotion=Sad",
+    "vulnerable": "living-room.html?emotion=Sad",
+    "distressed": "living-room.html?emotion=Sad",
+    "mournful": "living-room.html?emotion=Sad",
+    "miserable": "living-room.html?emotion=Sad",
+    "down": "living-room.html?emotion=Sad",
+
+    // Anxious / Restless
+    "panicked": "garden.html?emotion=Anxious",
+    "worried": "garden.html?emotion=Anxious",
+    "stressed": "garden.html?emotion=Anxious",
+    "nervous": "garden.html?emotion=Anxious",
+    "apprehensive": "garden.html?emotion=Anxious",
+    "restless": "garden.html?emotion=Anxious",
+    "frightened": "garden.html?emotion=Anxious",
+    "overwhelmed": "garden.html?emotion=Anxious",
+    "tense": "garden.html?emotion=Anxious",
+    "agitated": "garden.html?emotion=Anxious",
+    "dread": "garden.html?emotion=Anxious",
+    "uneasy": "garden.html?emotion=Anxious",
+    "shaky": "garden.html?emotion=Anxious",
+    "insecure": "garden.html?emotion=Anxious",
+    "distracted": "garden.html?emotion=Anxious",
+    "hyperactive": "garden.html?emotion=Anxious",
+    "paralyzed": "garden.html?emotion=Anxious",
+    "scattered": "garden.html?emotion=Anxious",
+    "scared": "garden.html?emotion=Anxious",
+    "jittery": "garden.html?emotion=Anxious",
+
+    // Angry / Irritated
+    "furious": "garden.html?emotion=Angry",
+    "annoyed": "garden.html?emotion=Angry",
+    "frustrated": "garden.html?emotion=Angry",
+    "resentful": "garden.html?emotion=Angry",
+    "bitter": "garden.html?emotion=Angry",
+    "hostile": "garden.html?emotion=Angry",
+    "outraged": "garden.html?emotion=Angry",
+    "mad": "garden.html?emotion=Angry",
+    "impatient": "garden.html?emotion=Angry",
+    "cynical": "garden.html?emotion=Angry",
+    "grumpy": "garden.html?emotion=Angry",
+    "vengeful": "garden.html?emotion=Angry",
+    "envious": "garden.html?emotion=Angry",
+    "jealous": "garden.html?emotion=Angry",
+    "indignant": "garden.html?emotion=Angry",
+    "defensive": "garden.html?emotion=Angry",
+    "sullen": "garden.html?emotion=Angry",
+    "spiteful": "garden.html?emotion=Angry",
+    "offended": "garden.html?emotion=Angry",
+
+    // Lonely / Isolated
+    "abandoned": "attic.html?emotion=Lonely",
+    "excluded": "attic.html?emotion=Lonely",
+    "empty": "attic.html?emotion=Lonely",
+    "isolated": "attic.html?emotion=Lonely",
+    "disconnected": "attic.html?emotion=Lonely",
+    "misunderstood": "attic.html?emotion=Lonely",
+    "ignored": "attic.html?emotion=Lonely",
+    "neglected": "attic.html?emotion=Lonely",
+    "homesick": "attic.html?emotion=Lonely",
+    "alienated": "attic.html?emotion=Lonely",
+    "numb": "attic.html?emotion=Lonely",
+    "forgotten": "attic.html?emotion=Lonely",
+    "rejected": "attic.html?emotion=Lonely",
+    "withdrawn": "attic.html?emotion=Lonely",
+    "desolate": "attic.html?emotion=Lonely",
+    "outcast": "attic.html?emotion=Lonely",
+    "unwanted": "attic.html?emotion=Lonely",
+    "unseen": "attic.html?emotion=Lonely",
+    "lonely": "attic.html?emotion=Lonely",
+    "alone": "attic.html?emotion=Lonely"
+  };
+
+  function initMoodSearch() {
+    const input = $('#mood-search-input');
+    const suggestions = $('#mood-search-suggestions');
+    if (!input || !suggestions) return;
+
+    input.addEventListener('input', () => {
+      const q = input.value.trim().toLowerCase();
+      if (!q) {
+        suggestions.classList.add('hidden');
+        return;
+      }
+
+      // Filter matches
+      const matches = Object.keys(MOODS_DATABASE).filter(mood => mood.includes(q));
+
+      if (matches.length === 0) {
+        suggestions.innerHTML = '<p class="fineprint" style="margin: 0; padding: 6px 12px;">No matching feelings found. Choose a need below.</p>';
+      } else {
+        suggestions.innerHTML = matches.map(mood => `
+          <a href="${MOODS_DATABASE[mood]}" class="suggestion-item" style="display: block; padding: 8px 12px; text-decoration: none; font-weight: 600; color: var(--ink); border-radius: var(--radius-sm); transition: background 0.2s;">
+            ${mood.charAt(0).toUpperCase() + mood.slice(1)}
+          </a>
+        `).join('');
+        
+        $$('.suggestion-item', suggestions).forEach(item => {
+          item.addEventListener('mouseenter', () => { item.style.background = 'var(--parchment-deep)'; });
+          item.addEventListener('mouseleave', () => { item.style.background = 'none'; });
+        });
+      }
+
+      suggestions.classList.remove('hidden');
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!input.contains(e.target) && !suggestions.contains(e.target)) {
+        suggestions.classList.add('hidden');
+      }
+    });
+  }
+
   document.addEventListener('DOMContentLoaded', () => {
     decideView();
     initToggles();
     initSoundStubs();
+    initMoodSearch();
   });
 })();

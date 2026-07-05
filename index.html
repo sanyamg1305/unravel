@@ -52,6 +52,12 @@
       <button class="btn btn-secondary" id="dont-know-feeling" style="margin-top: 40px;">I don’t know what I’m feeling</button>
 
       <div class="hidden" id="needs-panel" style="margin-top: 80px; text-align: center; width: 100%;">
+        <div style="position: relative; max-width: 420px; margin: 0 auto 48px; text-align: left;">
+          <label class="field-label" for="mood-search-input" style="margin-bottom: 10px; font-weight: 600; text-align: center; display: block;">Or search 50+ other feelings...</label>
+          <input class="text-input" id="mood-search-input" placeholder="e.g. overwhelmed, exhausted, rejected..." autocomplete="off">
+          <div id="mood-search-suggestions" class="card hidden" style="position: absolute; left: 0; right: 0; z-index: 10; margin-top: 4px; padding: 16px; max-height: 200px; overflow-y: auto; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-md);"></div>
+        </div>
+
         <h2 class="display-sm" style="font-size: 1.3rem; margin-bottom: 24px;">What do you need right now?</h2>
         <div style="display: flex; flex-direction: column; gap: 16px; max-width: 420px; margin: 0 auto;">
           <a class="btn btn-secondary" href="safe-room.html">I need to talk</a>
