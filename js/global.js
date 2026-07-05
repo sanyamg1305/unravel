@@ -77,10 +77,6 @@
       particleCount = 20;
       char = '❄';
       color = 'rgba(255, 255, 255, 0.75)';
-    } else if (season === 'monsoon') {
-      particleCount = 25;
-      char = '💧';
-      color = 'rgba(104, 133, 139, 0.4)';
     } else if (season === 'autumn') {
       particleCount = 12;
       char = '🍂';
