@@ -20,9 +20,17 @@
 </div>
 
 <header class="site-header">
-  <a href="/" class="brand"><span class="brand-mark" aria-hidden="true"><img src="assets/logo.jpeg" alt="" class="brand-mark-img"></span>Sukoon</a>
+  <a href="/" class="brand">Sukoon</a>
+  <nav class="main-nav">
+    <a href="/">Home</a>
+    <a href="attic.html">Journal</a>
+    <a href="garden.html">Grounding</a>
+    <a href="living-room.html" class="active">Stories</a>
+    <a href="haven.html">Learn</a>
+    <a href="crisis.html">Crisis</a>
+    <a href="about.html">About</a>
+  </nav>
   <div class="header-actions">
-    <button class="mini-toggle sun-moon-toggle" aria-label="Toggle night mode" aria-pressed="false">☀️</button>
     <button class="mini-toggle sensory-toggle" aria-label="Toggle low-sensory, calmer mode" aria-pressed="false">🌿</button>
   </div>
 </header>
@@ -34,70 +42,11 @@
       <h1 class="display-sm">You're not the only one who feels this way.</h1>
       <p class="lede lede-sm">Anonymous, gently moderated stories. No likes, no followers, just quiet company.</p>
       
-      <div class="living-room-decor">
-        <div class="cozy-element" title="Soft warm lighting"><span class="lamp-glow" aria-hidden="true"></span> <span>Soft Lamp</span></div>
-        <div class="cozy-element" title="Flickering warm fire"><span aria-hidden="true">🔥</span> <span>Fireplace crackling</span></div>
-        <div class="cozy-element" title="Rain beating on the glass"><span aria-hidden="true">🌧️</span> <span>Rain outside</span></div>
-        <div class="cozy-element" title="Warm tea cup"><span aria-hidden="true">🍵</span> <span>Tea steams <span class="tea-steam">~</span></span></div>
-        <div class="cozy-element" title="Steady clock"><span aria-hidden="true">🕰️</span> <span>Clock ticking</span></div>
-      </div>
     </div>
 
     <div class="wrap wrap-narrow hidden" id="living-room-not-connected">
       <div class="not-connected-note">
         The Living Room needs a Supabase project (the same one used by the Attic) to store and moderate posts. See <code>supabase/schema.sql</code> and <code>js/supabase-config.js</code>.
-      </div>
-    </div>
-
-    <!-- Companion Space -->
-    <div class="wrap wrap-narrow hidden" id="companion-space" style="margin-top:36px;">
-      <div class="card companion-card">
-        <h2 class="display-sm" style="font-size:1.2rem; margin-bottom:8px;">A Quiet Companion</h2>
-        <div class="chat-log" id="companion-chat-log"></div>
-        <div class="typing-indicator hidden" id="companion-typing"><span></span><span></span><span></span></div>
-        <div style="display:flex; gap:10px; margin-top:10px;">
-          <input class="text-input" id="companion-input" placeholder="Type whatever is in your head right now…" style="flex:1;">
-          <button class="btn btn-primary" id="companion-send">Send</button>
-        </div>
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:14px;">
-          <p class="fineprint" style="font-style:italic;">Your words stay only here, and are never saved or sent to advertising networks.</p>
-          <button class="btn btn-secondary" id="companion-finish" style="padding: 6px 14px; min-height: 36px; font-size: 0.85rem;">I'm ready to step away</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Rating Screen -->
-    <div class="wrap wrap-narrow hidden" id="reflection-rating" style="margin-top:36px;">
-      <div class="card reflection-rating-overlay">
-        <h2 class="display-sm" style="font-size:1.25rem; margin-bottom:8px;">Does the weight feel any different now?</h2>
-        <p class="lede lede-sm">How does your weather feel right now?</p>
-        <div class="weather-rating-grid">
-          <div class="weather-rating-card" data-weather="Heavy Rain">
-            <span class="weather-icon">🌧️</span><span>Heavy Rain</span>
-          </div>
-          <div class="weather-rating-card" data-weather="Fog">
-            <span class="weather-icon">🌫️</span><span>Fog</span>
-          </div>
-          <div class="weather-rating-card" data-weather="Cloudy">
-            <span class="weather-icon">☁️</span><span>Cloudy</span>
-          </div>
-          <div class="weather-rating-card" data-weather="Gentle Breeze">
-            <span class="weather-icon">🌬️</span><span>Gentle Breeze</span>
-          </div>
-          <div class="weather-rating-card" data-weather="Clear Morning">
-            <span class="weather-icon">☀️</span><span>Clear Morning</span>
-          </div>
-        </div>
-        <button class="btn btn-secondary" id="rating-close-btn">Close</button>
-      </div>
-    </div>
-
-    <div class="wrap wrap-narrow" id="heavy-blanket" style="margin-top:36px;">
-      <div class="card center">
-        <h2 class="display-sm" style="font-size:1.2rem;">The Heavy Blanket</h2>
-        <p class="lede lede-sm">A slow, weighted hum and a gentle visual, meant to feel like deep-pressure comfort.</p>
-        <div class="heavy-blanket-stage" id="blanket-stage">Just breathe here for a while.</div>
-        <button class="btn btn-primary" id="blanket-start" data-active="false">Wrap me up</button>
       </div>
     </div>
 

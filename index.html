@@ -20,9 +20,17 @@
 </div>
 
 <header class="site-header">
-  <a href="/" class="brand"><span class="brand-mark" aria-hidden="true"><img src="assets/logo.jpeg" alt="" class="brand-mark-img"></span>Sukoon</a>
+  <a href="/" class="brand">Sukoon</a>
+  <nav class="main-nav">
+    <a href="/" class="active">Home</a>
+    <a href="attic.html">Journal</a>
+    <a href="garden.html">Grounding</a>
+    <a href="living-room.html">Stories</a>
+    <a href="haven.html">Learn</a>
+    <a href="crisis.html">Crisis</a>
+    <a href="about.html">About</a>
+  </nav>
   <div class="header-actions">
-    <button class="mini-toggle sun-moon-toggle" aria-label="Toggle night mode" aria-pressed="false">☀️</button>
     <button class="mini-toggle sensory-toggle" aria-label="Toggle low-sensory, calmer mode" aria-pressed="false">🌿</button>
   </div>
 </header>
@@ -32,22 +40,26 @@
   <!-- ============ THE FOYER (default view) ============ -->
   <section class="page-section" id="foyer-view">
     <div class="wrap center">
-      <p class="eyebrow">no menus, just how you feel</p>
-      <h1 class="display">Where is your head at today?</h1>
-      <p class="lede">Pick the emotion that feels closest to true right now, and we'll guide you to a matching space. There are no evaluations here, and no wrong answers.</p>
+      <h1 class="display">How are you feeling today?</h1>
 
-      <div class="mood-grid" role="group" aria-label="Choose what you're feeling">
-        <a class="mood-card" href="living-room.html?emotion=Sad"><span class="mood-emoji" aria-hidden="true">🌧️</span>Sad</a>
-        <a class="mood-card" href="garden.html?emotion=Angry"><span class="mood-emoji" aria-hidden="true">🔥</span>Angry</a>
-        <a class="mood-card" href="garden.html?emotion=Anxious"><span class="mood-emoji" aria-hidden="true">🌪️</span>Anxious</a>
-        <a class="mood-card" href="attic.html?emotion=Lonely"><span class="mood-emoji" aria-hidden="true">🌫️</span>Lonely</a>
-        <a class="mood-card" href="garden.html?emotion=Overwhelmed"><span class="mood-emoji" aria-hidden="true">🎈</span>Overwhelmed</a>
-        <a class="mood-card" href="living-room.html?emotion=Burnt%20Out"><span class="mood-emoji" aria-hidden="true">🪫</span>Burnt Out</a>
-        <a class="mood-card" href="living-room.html?emotion=Empty"><span class="mood-emoji" aria-hidden="true">🕳️</span>Empty</a>
-        <a class="mood-card" href="attic.html?emotion=Grieving"><span class="mood-emoji" aria-hidden="true">🕯️</span>Grieving</a>
+      <div class="mood-grid" role="group" aria-label="Choose what you're feeling" style="grid-template-columns: repeat(2, 1fr); max-width: 480px; gap: 40px; margin-top: 20px;">
+        <a class="mood-card" href="living-room.html?emotion=Sad"><span class="mood-emoji" aria-hidden="true">😔</span>Sad</a>
+        <a class="mood-card" href="garden.html?emotion=Anxious"><span class="mood-emoji" aria-hidden="true">😰</span>Anxious</a>
+        <a class="mood-card" href="garden.html?emotion=Angry"><span class="mood-emoji" aria-hidden="true">😡</span>Angry</a>
+        <a class="mood-card" href="attic.html?emotion=Lonely"><span class="mood-emoji" aria-hidden="true">🫂</span>Lonely</a>
       </div>
 
-      <p class="fineprint">Prefer the quiet, low-stimulus view? <button class="link-btn" id="goto-nightstand">Visit the Nightstand</button> instead.</p>
+      <button class="btn btn-secondary" id="dont-know-feeling" style="margin-top: 40px;">I don’t know what I’m feeling</button>
+
+      <div class="hidden" id="needs-panel" style="margin-top: 80px; text-align: center; width: 100%;">
+        <h2 class="display-sm" style="font-size: 1.3rem; margin-bottom: 24px;">What do you need right now?</h2>
+        <div style="display: flex; flex-direction: column; gap: 16px; max-width: 420px; margin: 0 auto;">
+          <a class="btn btn-secondary" href="safe-room.html">I need to talk</a>
+          <a class="btn btn-secondary" href="safe-room.html?mode=window">I need to calm down</a>
+          <a class="btn btn-secondary" href="attic.html">I want to write</a>
+          <a class="btn btn-secondary" href="haven.html">I want to understand what’s happening</a>
+        </div>
+      </div>
     </div>
   </section>
 

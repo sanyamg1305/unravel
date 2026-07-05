@@ -7,7 +7,6 @@
   let supa = null;
   let currentUser = null;
 
-  /* ============ Setup / connection state ============ */
   function isConfigured() {
     return !!(window.SUKOON_SUPABASE && window.SUKOON_SUPABASE.url && window.SUKOON_SUPABASE.anonKey);
   }
@@ -17,7 +16,7 @@
     return window.supabase.createClient(window.SUKOON_SUPABASE.url, window.SUKOON_SUPABASE.anonKey);
   }
 
-  /* ============ Client-side encryption (WebCrypto) ============ */
+  /* ============ Encryption (WebCrypto AES-GCM) ============ */
   function b64encode(buf) {
     return btoa(String.fromCharCode(...new Uint8Array(buf)));
   }
@@ -65,7 +64,7 @@
 
   let encryptionKey = null;
 
-  /* ============ Auth ============ */
+  /* ============ Profiles and Auth ============ */
   async function ensureProfile(userId) {
     const { data } = await supa.from('profiles').select('*').eq('id', userId).maybeSingle();
     if (data) return data;
@@ -136,9 +135,15 @@
   function showAtticApp(profile) {
     $('#attic-locked').classList.add('hidden');
     $('#attic-app').classList.remove('hidden');
-    $('#growth-count').textContent = profile.visit_count || 1;
+    
+    const countEl = $('#growth-count');
+    if (countEl) countEl.textContent = profile.visit_count || 1;
+
+    // Show sign out btn in header
+    const signOutBtn = $('#attic-signout');
+    if (signOutBtn) signOutBtn.classList.remove('hidden');
+
     loadEntries();
-    checkDeliveredLetters();
   }
 
   function initSignOut() {
@@ -153,42 +158,23 @@
     });
   }
 
-  /* ============ The Fireplace (ephemeral, never sent anywhere) ============ */
-  function initFireplace() {
-    const textarea = $('#fireplace-input');
-    const burnBtn = $('#fireplace-burn');
-    const stage = $('#fireplace-stage');
-    if (!textarea || !burnBtn || !stage) return;
-
-    burnBtn.addEventListener('click', () => {
-      const text = textarea.value.trim();
-      if (!text) return;
-      const chars = text.split('');
-      stage.innerHTML = chars.map(ch => {
-        const delay = (Math.random() * 1.2).toFixed(2);
-        const dx = (Math.random() * 60 - 30).toFixed(0);
-        const display = ch === ' ' ? '&nbsp;' : ch;
-        return `<span class="ash-char" style="--d:${delay}s; --dx:${dx}">${display}</span>`;
-      }).join('');
-      stage.classList.add('is-burning');
-      textarea.value = '';
-      textarea.disabled = true;
-      setTimeout(() => {
-        stage.innerHTML = '';
-        stage.classList.remove('is-burning');
-        textarea.disabled = false;
-      }, 2600);
-    });
-  }
-
-  /* ============ The Keepsake Box (encrypted CRUD) ============ */
+  /* ============ Keepsake Box Encrypted Entry List ============ */
   async function loadEntries() {
     const list = $('#keepsake-list');
     if (!list) return;
     list.innerHTML = '<p class="fineprint">Opening the box…</p>';
+    
     const { data, error } = await supa.from('entries').select('*').order('created_at', { ascending: false });
-    if (error) { list.innerHTML = `<p class="fineprint">Couldn't load entries: ${error.message}</p>`; return; }
-    if (!data.length) { list.innerHTML = '<p class="fineprint">Nothing kept yet. Whatever you save here stays only for you.</p>'; return; }
+    
+    if (error) { 
+      list.innerHTML = `<p class="fineprint">Couldn't load entries: ${error.message}</p>`; 
+      return; 
+    }
+    
+    if (!data.length) { 
+      list.innerHTML = '<p class="fineprint">Nothing kept yet. Whatever you write down remains private to you.</p>'; 
+      return; 
+    }
 
     const rows = await Promise.all(data.map(async (row) => {
       try {
@@ -200,12 +186,12 @@
     }));
 
     list.innerHTML = rows.map(r => `
-      <div class="entry-row">
-        <div>
-          <div class="entry-meta">${new Date(r.date).toLocaleString()}</div>
-          <div>${r.text.slice(0, 140)}${r.text.length > 140 ? '…' : ''}</div>
+      <div class="entry-row" style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--line); padding:16px 0; gap:12px;">
+        <div style="flex:1;">
+          <div class="entry-meta" style="font-size:0.8rem; color:var(--ink-faint);">${new Date(r.date).toLocaleString()}</div>
+          <div style="font-size:1.02rem; color:var(--ink); margin-top:4px; white-space:pre-wrap;">${r.text}</div>
         </div>
-        <button class="entry-delete" data-id="${r.id}">Let this one go</button>
+        <button class="entry-delete btn btn-ghost" data-id="${r.id}" style="padding:6px; min-height:36px; min-width:36px; font-size:0.85rem;">Let this go</button>
       </div>
     `).join('');
 
@@ -215,143 +201,35 @@
         loadEntries();
       });
     });
-
-    window.__sukoonDecryptedEntries = rows;
   }
 
   function initKeepsakeForm() {
     const textarea = $('#keepsake-input');
     const saveBtn = $('#keepsake-save');
     if (!textarea || !saveBtn) return;
+    
     saveBtn.addEventListener('click', async () => {
       const text = textarea.value.trim();
       if (!text) return;
+      
       saveBtn.disabled = true;
-      const { iv, ciphertext } = await encryptText(encryptionKey, text);
-      await supa.from('entries').insert({ user_id: currentUser.id, iv, ciphertext });
-      textarea.value = '';
-      saveBtn.disabled = false;
-      loadEntries();
-    });
-  }
-
-  /* ============ Pack Your Bags (export) ============ */
-  function download(filename, content, mime) {
-    const blob = new Blob([content], { type: mime });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url; a.download = filename;
-    document.body.appendChild(a); a.click(); a.remove();
-    URL.revokeObjectURL(url);
-  }
-
-  function initExport() {
-    const txtBtn = $('#export-txt');
-    const pdfBtn = $('#export-pdf');
-    if (!txtBtn || !pdfBtn) return;
-
-    txtBtn.addEventListener('click', () => {
-      const entries = window.__sukoonDecryptedEntries || [];
-      const text = entries.map(e => `${new Date(e.date).toLocaleString()}\n${e.text}\n`).join('\n---\n\n');
-      download('sukoon-keepsake-box.txt', text || 'Nothing kept yet.', 'text/plain');
-    });
-
-    pdfBtn.addEventListener('click', async () => {
-      const btn = $('#export-pdf');
-      btn.disabled = true;
-      btn.textContent = 'Packing…';
-      try {
-        if (!window.jspdf) {
-          await new Promise((resolve, reject) => {
-            const s = document.createElement('script');
-            s.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
-            s.onload = resolve; s.onerror = reject;
-            document.head.appendChild(s);
-          });
-        }
-        const { jsPDF } = window.jspdf;
-        const doc = new jsPDF();
-        const entries = window.__sukoonDecryptedEntries || [];
-        let y = 20;
-        doc.setFontSize(16); doc.text('Sukoon — Keepsake Box', 14, y); y += 12;
-        doc.setFontSize(11);
-        entries.forEach(e => {
-          const dateStr = new Date(e.date).toLocaleString();
-          const lines = doc.splitTextToSize(`${dateStr}\n${e.text}`, 180);
-          if (y + lines.length * 6 > 280) { doc.addPage(); y = 20; }
-          doc.text(lines, 14, y);
-          y += lines.length * 6 + 8;
-        });
-        if (!entries.length) doc.text('Nothing kept yet.', 14, y);
-        doc.save('sukoon-keepsake-box.pdf');
-      } finally {
-        btn.disabled = false;
-        btn.textContent = 'Download as PDF';
-      }
-    });
-  }
-
-  /* ============ The Overthinker's Desk ============ */
-  function initOverthinkerDesk() {
-    const fileInput = $('#overthink-file');
-    const textInput = $('#overthink-text');
-    const submitBtn = $('#overthink-submit');
-    const resultBox = $('#overthink-result');
-    if (!fileInput || !textInput || !submitBtn || !resultBox) return;
-
-    function fileToBase64(file) {
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve(reader.result.split(',')[1]);
-        reader.onerror = reject;
-        reader.readAsDataURL(file);
-      });
-    }
-
-    submitBtn.addEventListener('click', async () => {
-      const message = textInput.value.trim();
-      const file = fileInput.files[0];
-      if (!message && !file) return;
-
-      submitBtn.disabled = true;
-      resultBox.classList.remove('hidden');
-      resultBox.innerHTML = '<p class="fineprint">Looking at this with you…</p>';
-
-      const payload = { message, hasImage: !!file };
-      if (file) {
-        try {
-          payload.imageBase64 = await fileToBase64(file);
-          payload.imageMimeType = file.type;
-        } catch (e) { /* ignore, proceed text-only */ }
-      }
+      saveBtn.textContent = 'Saving…';
 
       try {
-        const res = await fetch('/api/generate', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ type: 'overthink', payload }),
-        });
-        const body = await res.json();
-        if (!body.ok) throw new Error(body.error || 'Something went wrong');
-        const d = body.data;
-        resultBox.innerHTML = `
-          <div class="card" style="text-align:left;">
-            <p><b>What was actually said:</b> ${d.whatTheySaid}</p>
-            <p style="margin-top:10px;"><b>Ways this could reasonably be read:</b></p>
-            <ul>${d.likelyMeanings.map(m => `<li>${m}</li>`).join('')}</ul>
-            ${d.whatSeemsUnlikely ? `<p style="margin-top:10px;"><b>Might be worth setting down:</b> ${d.whatSeemsUnlikely}</p>` : ''}
-            <p style="margin-top:10px;"><b>For right now:</b> ${d.groundingReminder}</p>
-          </div>
-        `;
-      } catch (err) {
-        resultBox.innerHTML = `<p class="fineprint">This tool needs a Gemini API key configured on the server to work. (${err.message})</p>`;
+        const { iv, ciphertext } = await encryptText(encryptionKey, text);
+        await supa.from('entries').insert({ user_id: currentUser.id, iv, ciphertext });
+        textarea.value = '';
+        loadEntries();
+      } catch (e) {
+        console.error(e);
       } finally {
-        submitBtn.disabled = false;
+        saveBtn.disabled = false;
+        saveBtn.textContent = 'Save to my Keepsake Box';
       }
     });
   }
 
-  /* ============ Dust Particles Animation ============ */
+  /* ============ Dust Particles Animation (Calmed down) ============ */
   function initDustParticles() {
     const canvas = $('#dust-canvas');
     if (!canvas) return;
@@ -366,16 +244,16 @@
     });
 
     const particles = [];
-    const maxParticles = 30;
+    const maxParticles = 15; // Reduced density
 
     for (let i = 0; i < maxParticles; i++) {
       particles.push({
         x: Math.random() * width,
         y: Math.random() * height,
-        r: 1 + Math.random() * 2.5,
-        vx: -0.1 + Math.random() * 0.2,
-        vy: -0.05 + Math.random() * 0.15,
-        op: 0.1 + Math.random() * 0.45
+        r: 1 + Math.random() * 1.5,
+        vx: -0.05 + Math.random() * 0.1, // Slower drift
+        vy: -0.02 + Math.random() * 0.08,
+        op: 0.05 + Math.random() * 0.25
       });
     }
 
@@ -407,221 +285,9 @@
     draw();
   }
 
-  /* ============ Companion Chat Flow (v4) ============ */
-  function initCompanionChat() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const activeEmotion = urlParams.get('emotion');
-    const companionSpace = $('#companion-space');
-    if (!companionSpace) return;
-
-    if (!activeEmotion) {
-      companionSpace.classList.add('hidden');
-      return;
-    }
-
-    companionSpace.classList.remove('hidden');
-
-    const log = $('#companion-chat-log');
-    const input = $('#companion-input');
-    const sendBtn = $('#companion-send');
-    const finishBtn = $('#companion-finish');
-    const typing = $('#companion-typing');
-    const ratingSpace = $('#reflection-rating');
-
-    // Add greeting (implementing Emotional Memory opt-in)
-    let greeting = 'Some memories become lighter when someone else sees them.';
-    const weatherHistory = JSON.parse(localStorage.getItem('sukoon_weather_history') || '[]');
-    const feltBefore = weatherHistory.some(w => w.emotion === activeEmotion);
-    if (feltBefore) {
-      greeting += ' I remember this feeling visiting before.';
-    }
-    appendBubble('companion', greeting);
-
-    function appendBubble(sender, text) {
-      const b = document.createElement('div');
-      b.className = `chat-bubble ${sender}`;
-      b.textContent = text;
-      log.appendChild(b);
-      log.scrollTop = log.scrollHeight;
-    }
-
-    // Accidental exit draft handling
-    input.addEventListener('input', () => {
-      window.Sukoon.saveDraft(input.value);
-    });
-
-    document.addEventListener('sukoon-restore-draft', (e) => {
-      if (e.detail) {
-        input.value = e.detail;
-      }
-    });
-
-    async function handleSend() {
-      const text = input.value.trim();
-      if (!text) return;
-
-      appendBubble('user', text);
-      input.value = '';
-      window.Sukoon.clearDraft(); // clear since sent
-      sendBtn.disabled = true;
-      typing.classList.remove('hidden');
-
-      try {
-        const res = await fetch('/api/generate', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            type: 'companion',
-            payload: {
-              emotion: activeEmotion,
-              journalText: text
-            }
-          })
-        });
-        const data = await res.json();
-        typing.classList.add('hidden');
-        if (data.ok && data.data && data.data.text) {
-          appendBubble('companion', data.data.text);
-        } else {
-          appendBubble('companion', 'I spent a little time with your words. Let’s sit here together.');
-        }
-      } catch (e) {
-        typing.classList.add('hidden');
-        appendBubble('companion', 'I spent a little time with your words. Thank you for trusting this space.');
-      } finally {
-        sendBtn.disabled = false;
-      }
-    }
-
-    sendBtn.addEventListener('click', handleSend);
-    input.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') handleSend();
-    });
-
-    finishBtn.addEventListener('click', () => {
-      companionSpace.classList.add('hidden');
-      ratingSpace.classList.remove('hidden');
-      window.Sukoon.clearDraft();
-    });
-
-    // Rating selections
-    $$('.weather-rating-card', ratingSpace).forEach(card => {
-      card.addEventListener('click', () => {
-        const weather = card.dataset.weather;
-        saveWeatherRating(activeEmotion || 'Attic', weather);
-
-        ratingSpace.innerHTML = `
-          <div class="card">
-            <h2 class="display-sm" style="font-size:1.2rem; margin-bottom:12px;">Thank you for reflecting with me.</h2>
-            <p class="lede lede-sm">Some thoughts aren't meant to be carried forever. I hope you feel a little lighter now.</p>
-            <button class="btn btn-primary" id="done-ref-btn" style="margin-top:16px;">Finish</button>
-          </div>
-        `;
-        
-        $('#done-ref-btn').addEventListener('click', () => {
-          window.location.href = window.location.pathname;
-        });
-      });
-    });
-
-    const closeBtn = $('#rating-close-btn');
-    if (closeBtn) {
-      closeBtn.addEventListener('click', () => {
-        window.location.href = window.location.pathname;
-      });
-    }
-  }
-
-  function saveWeatherRating(emotion, weather) {
-    const list = JSON.parse(localStorage.getItem('sukoon_weather_history') || '[]');
-    list.push({
-      date: new Date().toISOString(),
-      room: 'Attic',
-      emotion: emotion,
-      weather: weather
-    });
-    localStorage.setItem('sukoon_weather_history', JSON.stringify(list));
-
-    // Water plant
-    let plantVisits = parseInt(localStorage.getItem('sukoon_plant_visits') || '0', 10);
-    localStorage.setItem('sukoon_plant_visits', plantVisits + 1);
-  }
-
-  /* ============ Letter to Future Self (v4) ============ */
-  function initFutureLetters() {
-    const input = $('#future-letter-input');
-    const saveBtn = $('#future-letter-save');
-    const status = $('#future-letter-status');
-    const monthsSelect = $('#future-letter-time');
-
-    if (!saveBtn || !input) return;
-
-    saveBtn.addEventListener('click', () => {
-      const text = input.value.trim();
-      if (!text) return;
-
-      const months = parseInt(monthsSelect.value, 10);
-      const deliveryDate = new Date();
-      deliveryDate.setMonth(deliveryDate.getMonth() + months);
-
-      // Save locally (or encrypt using Attic key if signed in)
-      const letterObj = {
-        id: crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).slice(2),
-        date: new Date().toISOString(),
-        deliverAt: deliveryDate.toISOString(),
-        text: text
-      };
-
-      const letters = JSON.parse(localStorage.getItem('sukoon_future_letters') || '[]');
-      letters.push(letterObj);
-      localStorage.setItem('sukoon_future_letters', JSON.stringify(letters));
-
-      input.value = '';
-      status.textContent = `Your letter has been locked and saved. It will quietly wait here for you until ${deliveryDate.toLocaleDateString()}.`;
-      checkDeliveredLetters();
-    });
-  }
-
-  function checkDeliveredLetters() {
-    const container = $('#delivered-letters');
-    if (!container) return;
-
-    const letters = JSON.parse(localStorage.getItem('sukoon_future_letters') || '[]');
-    const now = new Date();
-
-    const delivered = letters.filter(l => new Date(l.deliverAt) <= now);
-    const pendingCount = letters.length - delivered.length;
-
-    let html = '';
-    if (delivered.length > 0) {
-      html += `<h3 class="display-sm" style="font-size:1.1rem; margin-top:20px;">Letters Delivered:</h3>`;
-      delivered.forEach(l => {
-        html += `
-          <div class="card" style="margin-top:12px; background:var(--surface-soft); border:1px solid var(--line);">
-            <div class="entry-meta">Written on ${new Date(l.date).toLocaleDateString()} — Delivered on ${new Date(l.deliverAt).toLocaleDateString()}</div>
-            <p style="margin-top:8px; font-style:italic;">"${l.text}"</p>
-          </div>
-        `;
-      });
-    }
-
-    if (pendingCount > 0) {
-      html += `
-        <p class="fineprint" style="margin-top:14px; font-style:italic;">
-          📬 You have ${pendingCount} private letter(s) waiting in the future.
-        </p>
-      `;
-    }
-
-    container.innerHTML = html;
-  }
-
   /* ============ Page Init ============ */
   document.addEventListener('DOMContentLoaded', async () => {
     initDustParticles();
-    initCompanionChat();
-    initFireplace();
-    initFutureLetters();
 
     if (!isConfigured()) {
       const note = $('#attic-not-connected');
@@ -635,8 +301,6 @@
     initAuthForm();
     initSignOut();
     initKeepsakeForm();
-    initExport();
-    initOverthinkerDesk();
 
     const { data: { session } } = await supa.auth.getSession();
     if (session) {
@@ -649,8 +313,6 @@
       } else {
         await supa.auth.signOut();
       }
-    } else {
-      checkDeliveredLetters(); // Non-authed users can also see local offline letters
     }
   });
 })();

@@ -23,10 +23,18 @@
 <div class="dust-container" aria-hidden="true"><canvas id="dust-canvas" style="width:100%; height:100%; display:block; opacity:0.6;"></canvas></div>
 
 <header class="site-header">
-  <a href="/" class="brand"><span class="brand-mark" aria-hidden="true"><img src="assets/logo.jpeg" alt="" class="brand-mark-img"></span>Sukoon</a>
+  <a href="/" class="brand">Sukoon</a>
+  <nav class="main-nav">
+    <a href="/">Home</a>
+    <a href="attic.html" class="active">Journal</a>
+    <a href="garden.html">Grounding</a>
+    <a href="living-room.html">Stories</a>
+    <a href="haven.html">Learn</a>
+    <a href="crisis.html">Crisis</a>
+    <a href="about.html">About</a>
+  </nav>
   <div class="header-actions">
-    <button class="btn btn-ghost hidden" id="attic-signout">Step out of the Attic</button>
-    <button class="mini-toggle sun-moon-toggle" aria-label="Toggle night mode" aria-pressed="false">☀️</button>
+    <button class="btn btn-ghost hidden" id="attic-signout">Step out</button>
     <button class="mini-toggle sensory-toggle" aria-label="Toggle low-sensory, calmer mode" aria-pressed="false">🌿</button>
   </div>
 </header>
@@ -117,63 +125,14 @@
         <span>You've visited the Attic <b id="growth-count">1</b> time(s). Growth here isn't measured in streaks.</span>
       </div>
 
-      <div class="card" id="fireplace" style="margin-bottom:28px; text-align:left;">
-        <h2 class="display-sm" style="font-size:1.15rem;">The Fireplace</h2>
-        <p class="lede lede-sm" style="margin-top:6px;">Write it, then let it burn. This never touches a server, not even for a second.</p>
-        <textarea class="textarea-input" id="fireplace-input" placeholder="Say the thing you don't want to keep…" style="margin-top:12px;"></textarea>
-        <div class="fireplace-stage" id="fireplace-stage"></div>
-        <button class="btn btn-primary" id="fireplace-burn" style="margin-top:10px;">Burn it</button>
-      </div>
-
       <div class="card" id="keepsake-box" style="margin-bottom:28px; text-align:left;">
-        <h2 class="display-sm" style="font-size:1.15rem;">The Keepsake Box</h2>
-        <p class="lede lede-sm" style="margin-top:6px;">Save something you'd like to come back to. Encrypted before it leaves your device.</p>
-        <textarea class="textarea-input" id="keepsake-input" placeholder="Write whatever you'd like to keep…" style="margin-top:12px;"></textarea>
-        <button class="btn btn-primary" id="keepsake-save" style="margin-top:10px;">Save to my Keepsake Box</button>
-        <div id="keepsake-list" style="margin-top:18px;"></div>
-      </div>
-
-      <!-- Letter to Future Self -->
-      <div class="card" id="future-letter-box" style="margin-bottom:28px; text-align:left;">
-        <h2 class="display-sm" style="font-size:1.15rem;">Letter to Future Me</h2>
-        <p class="lede lede-sm" style="margin-top:6px;">Write a private letter to your future self. It will remain locked and quietly wait until the date arrives. No notifications—only if you return.</p>
-        <textarea class="textarea-input" id="future-letter-input" placeholder="What would you like to say to yourself in the future? Write from the heart..." style="margin-top:12px;"></textarea>
-        
-        <div style="display:flex; align-items:center; gap:12px; margin-top:12px; flex-wrap:wrap;">
-          <label class="field-label" for="future-letter-time" style="margin-bottom:0;">Deliver in:</label>
-          <select class="thermostat-select" id="future-letter-time" style="width:auto; min-height:36px; padding:6px 12px; font-size:0.9rem;">
-            <option value="1">1 Month</option>
-            <option value="3">3 Months</option>
-            <option value="6">6 Months</option>
-            <option value="12">1 Year</option>
-          </select>
-          <button class="btn btn-primary" id="future-letter-save" style="min-height:36px; padding:8px 18px; font-size:0.9rem;">Lock &amp; Save Letter</button>
+        <h2 class="display-sm" style="font-size:1.25rem;">Write down what you need to keep safe.</h2>
+        <p class="lede lede-sm" style="margin-top:6px; max-width:100%;">Your words are encrypted locally on your own device before they are ever stored. This is your private sanctuary.</p>
+        <textarea class="textarea-input" id="keepsake-input" placeholder="Write whatever you'd like to hold onto today. Take your time..." style="margin-top:20px; min-height:220px; font-size:1.05rem;"></textarea>
+        <div style="display:flex; justify-content:flex-end; margin-top:20px;">
+          <button class="btn btn-primary" id="keepsake-save">Save to my Keepsake Box</button>
         </div>
-        <p class="fineprint" id="future-letter-status" style="margin-top:8px;"></p>
-        <div id="delivered-letters" style="margin-top:16px;"></div>
-      </div>
-
-      <div class="card" style="margin-bottom:28px; text-align:left;">
-        <h2 class="display-sm" style="font-size:1.15rem;">Pack Your Bags</h2>
-        <p class="lede lede-sm" style="margin-top:6px;">Everything you've kept, yours to take anytime.</p>
-        <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:12px;">
-          <button class="btn btn-secondary" id="export-txt">Download as TXT</button>
-          <button class="btn btn-secondary" id="export-pdf">Download as PDF</button>
-        </div>
-      </div>
-
-      <div class="card" id="overthinkers-desk" style="text-align:left;">
-        <h2 class="display-sm" style="font-size:1.15rem;">The Overthinker's Desk</h2>
-        <p class="lede lede-sm" style="margin-top:6px;">Paste a stressful message, or upload a screenshot. A calm second look, meant to ground you in what was actually said.</p>
-        <textarea class="textarea-input" id="overthink-text" placeholder="Paste the message or describe the situation…" style="margin-top:12px; min-height:90px;"></textarea>
-        <div class="overthink-upload" style="margin-top:10px;">
-          <label class="btn btn-secondary" for="overthink-file" style="cursor:pointer;">
-            📎 Attach a screenshot
-            <input type="file" id="overthink-file" accept="image/*" class="sr-only">
-          </label>
-          <button class="btn btn-primary" id="overthink-submit">Help me see this clearly</button>
-        </div>
-        <div id="overthink-result" class="hidden" style="margin-top:16px;"></div>
+        <div id="keepsake-list" style="margin-top:36px; border-top:1px solid var(--line); padding-top:28px;"></div>
       </div>
 
     </div>

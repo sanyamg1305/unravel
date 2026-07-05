@@ -29,6 +29,17 @@
   function initToggles() {
     const toNS = $('#goto-nightstand');
     const toFoyer = $('#goto-foyer');
+    const dontKnowBtn = $('#dont-know-feeling');
+    const needsPanel = $('#needs-panel');
+
+    if (dontKnowBtn && needsPanel) {
+      dontKnowBtn.addEventListener('click', () => {
+        needsPanel.classList.toggle('hidden');
+        if (!needsPanel.classList.contains('hidden')) {
+          needsPanel.scrollIntoView({ behavior: 'smooth' });
+        }
+      });
+    }
 
     if (toNS) {
       toNS.addEventListener('click', () => {

@@ -20,9 +20,17 @@
 </div>
 
 <header class="site-header">
-  <a href="/" class="brand"><span class="brand-mark" aria-hidden="true"><img src="assets/logo.jpeg" alt="" class="brand-mark-img"></span>Sukoon</a>
+  <a href="/" class="brand">Sukoon</a>
+  <nav class="main-nav">
+    <a href="/">Home</a>
+    <a href="attic.html">Journal</a>
+    <a href="garden.html">Grounding</a>
+    <a href="living-room.html">Stories</a>
+    <a href="haven.html" class="active">Learn</a>
+    <a href="crisis.html">Crisis</a>
+    <a href="about.html">About</a>
+  </nav>
   <div class="header-actions">
-    <button class="mini-toggle sun-moon-toggle" aria-label="Toggle night mode" aria-pressed="false">☀️</button>
     <button class="mini-toggle sensory-toggle" aria-label="Toggle low-sensory, calmer mode" aria-pressed="false">🌿</button>
   </div>
 </header>
@@ -37,69 +45,6 @@
 
     <div class="wrap haven-dashboard" style="margin-top: 40px;">
       
-      <!-- 1. The Growing Plant -->
-      <div class="plant-box">
-        <div id="plant-container">
-          <!-- Dynamically changing SVG based on visits -->
-          <svg class="plant-svg" viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">
-            <path class="plant-pot" d="M35 90 L65 90 L60 115 L40 115 Z" />
-            <!-- Stem and leaves injected dynamically -->
-            <path class="plant-stem" d="M50 90 L50 90" id="plant-stem-path" />
-          </svg>
-        </div>
-        <div style="text-align:left; max-width:320px;">
-          <h2 class="display-sm" style="font-size:1.15rem; margin-bottom:6px;">The Growing Plant</h2>
-          <p class="lede lede-sm" style="font-size:0.92rem;" id="plant-desc">Every visit and reflection quietly waters a tiny seed. It grows at its own steady pace.</p>
-          <button class="btn btn-secondary" id="water-plant-btn" style="margin-top:10px; min-height:36px; padding:6px 14px; font-size:0.85rem;">💦 Water Plant</button>
-        </div>
-      </div>
-
-      <!-- 2. The Early Whisper (Opt-in Pattern Alerts) -->
-      <div class="card" style="text-align:left;" id="early-whisper-box">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-          <h2 class="display-sm" style="font-size:1.15rem;">The Early Whisper</h2>
-          <label class="thermostat-checkbox-item" style="font-size:0.85rem; margin-bottom:0;">
-            <input type="checkbox" id="whisper-optin-check">
-            <span>Opt-In</span>
-          </label>
-        </div>
-        <p class="lede lede-sm">With your permission, Sukoon gently notices long-term emotional patterns without diagnosing or predicting. Your thoughts stay yours.</p>
-        <div id="whisper-content" class="hidden" style="margin-top:14px; background:var(--surface-soft); padding:16px; border-radius:var(--radius-md); border:1px solid var(--line); font-style:italic;">
-          Looking quietly at your history...
-        </div>
-      </div>
-
-      <!-- 3. Weekly Ritual -->
-      <div class="card" style="text-align:left;" id="weekly-ritual-box">
-        <h2 class="display-sm" style="font-size:1.15rem; margin-bottom:6px;">Weekly Ritual</h2>
-        <p class="lede lede-sm">Looking back at your week, what feels a little lighter now?</p>
-        <div id="weekly-ritual-form-wrap" style="margin-top:12px;">
-          <textarea class="textarea-input" id="weekly-input" placeholder="Reflect on what feels lighter..." style="min-height:90px;"></textarea>
-          <button class="btn btn-primary" id="weekly-submit" style="margin-top:10px; min-height:36px; padding:8px 18px; font-size:0.9rem;">Share with yourself</button>
-        </div>
-        <div id="weekly-history" style="margin-top:18px; display:flex; flex-direction:column; gap:12px;"></div>
-      </div>
-
-      <!-- 4. Emotional Timeline -->
-      <div class="card" style="text-align:left;">
-        <h2 class="display-sm" style="font-size:1.15rem; margin-bottom:6px;">Emotional Timeline</h2>
-        <p class="lede lede-sm">Moments you survived and walked through. Reflection, not productivity.</p>
-        <div class="timeline-list" id="timeline-list">
-          <p class="fineprint">No weather moments recorded yet. Complete a reflection session in the Living Room, Garden, or Attic to add cards here.</p>
-        </div>
-      </div>
-
-      <!-- 5. The Suitcase Exporter -->
-      <div class="card" style="text-align:left;">
-        <h2 class="display-sm" style="font-size:1.15rem; margin-bottom:6px;">The Suitcase Exporter</h2>
-        <p class="lede lede-sm">Collect everything you've saved, written, and felt. Export it into clean physical files to take with you or share with a therapist.</p>
-        <div style="display:flex; gap:12px; flex-wrap:wrap; margin-top:14px;">
-          <button class="btn btn-secondary" id="export-suitcase-txt">Export as TXT</button>
-          <button class="btn btn-secondary" id="export-suitcase-pdf">Export as PDF</button>
-        </div>
-        <p class="fineprint" style="margin-top:8px;">Includes Keepsake entries, letters to future self, weekly rituals, and emotional weather logs.</p>
-      </div>
-
       <!-- 6. The Finite Library -->
       <div class="card" style="text-align:left;">
         <h2 class="display-sm" style="font-size:1.15rem; margin-bottom:4px;">The Library</h2>

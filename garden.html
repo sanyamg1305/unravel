@@ -20,9 +20,17 @@
 </div>
 
 <header class="site-header">
-  <a href="/" class="brand"><span class="brand-mark" aria-hidden="true"><img src="assets/logo.jpeg" alt="" class="brand-mark-img"></span>Sukoon</a>
+  <a href="/" class="brand">Sukoon</a>
+  <nav class="main-nav">
+    <a href="/">Home</a>
+    <a href="attic.html">Journal</a>
+    <a href="garden.html" class="active">Grounding</a>
+    <a href="living-room.html">Stories</a>
+    <a href="haven.html">Learn</a>
+    <a href="crisis.html">Crisis</a>
+    <a href="about.html">About</a>
+  </nav>
   <div class="header-actions">
-    <button class="mini-toggle sun-moon-toggle" aria-label="Toggle night mode" aria-pressed="false">☀️</button>
     <button class="mini-toggle sensory-toggle" aria-label="Toggle low-sensory, calmer mode" aria-pressed="false">🌿</button>
   </div>
 </header>
@@ -93,40 +101,15 @@
       </div>
     </div>
 
-    <div class="wrap">
-      <div class="garden-grid">
-
-        <div class="card reset-circle-wrap" id="reset-circle">
-          <h2 class="display-sm" style="font-size:1.2rem;">60-Second Reset</h2>
-          <svg class="reset-circle-svg" width="220" height="220" viewBox="0 0 220 220" role="img" aria-label="A slow, expanding and contracting circle guiding you to breathe in, hold, and breathe out">
-            <circle cx="110" cy="110" r="90" fill="none" stroke="#1e5c6a22" stroke-width="2"></circle>
-            <circle class="pulse" cx="110" cy="110" r="40" fill="var(--teal)" opacity="0.55"></circle>
-          </svg>
-          <p class="reset-word" id="reset-word" aria-live="polite">Breathe in…</p>
-          <button class="btn btn-secondary" id="reset-toggle">Pause</button>
-        </div>
-
-        <div class="card sound-window" id="sound-window">
-          <h2 class="display-sm" style="font-size:1.2rem;">Sound Window</h2>
-          <p class="lede lede-sm">Gentle, loopable ambience. Nothing is recorded, nothing plays without you choosing it.</p>
-          <div class="sound-track">
-            <span>🌧️ Rain against a window</span>
-            <button aria-label="Play rain sound" data-track="rain">▶</button>
-          </div>
-          <div class="sound-track">
-            <span>🔔 A single, slow tone</span>
-            <button aria-label="Play a slow ambient tone" data-track="tone">▶</button>
-          </div>
-        </div>
-
-        <div class="card" id="scream-jar" style="grid-column: 1 / -1;">
-          <h2 class="display-sm" style="font-size:1.2rem;">The Scream Jar</h2>
-          <p class="lede lede-sm">Say it, sigh it, or scream it into your microphone. This only draws a picture of your voice on your own screen. Nothing is recorded, saved, or sent anywhere.</p>
-          <button class="btn btn-primary" id="jar-start">Let me use my microphone</button>
-          <canvas class="scream-jar-canvas hidden" id="jar-canvas" width="600" height="160" aria-label="A live visualization of your voice, not recorded or saved"></canvas>
-          <p class="fineprint hidden" id="jar-status">Listening only on this page, only right now.</p>
-        </div>
-
+    <div class="wrap wrap-narrow" style="margin-top: 40px;">
+      <div class="card reset-circle-wrap" id="reset-circle" style="text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 48px;">
+        <h2 class="display-sm" style="font-size:1.4rem; margin-bottom: 24px;">60-Second Reset</h2>
+        <svg class="reset-circle-svg" width="220" height="220" viewBox="0 0 220 220" role="img" aria-label="A slow, expanding and contracting circle guiding you to breathe in, hold, and breathe out" style="margin: 0 auto 20px;">
+          <circle cx="110" cy="110" r="90" fill="none" stroke="var(--line)" stroke-width="2"></circle>
+          <circle class="pulse" cx="110" cy="110" r="40" fill="var(--rust)" opacity="0.45"></circle>
+        </svg>
+        <p class="reset-word" id="reset-word" aria-live="polite" style="font-size:1.15rem; font-weight:600; margin-bottom:20px; color:var(--ink-soft);">Breathe in…</p>
+        <button class="btn btn-secondary" id="reset-toggle">Pause</button>
       </div>
     </div>
   </section>
