@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Sukoon — a digital sanctuary</title>
-<meta name="description" content="Sukoon is a digital sanctuary. No navigation menus, just a place that routes you by how you feel.">
+<meta name="description" content="Sukoon is a digital sanctuary. Tell us how you're feeling and we'll guide you to the room that might help most.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Lora:ital@0;1&family=Quicksand:wght@500;600;700&family=Nunito:wght@400;600&display=swap" rel="stylesheet">
@@ -41,12 +41,17 @@
   <section class="page-section" id="foyer-view">
     <div class="wrap center">
       <h1 class="display">How are you feeling today?</h1>
+      <p class="lede">There's no wrong answer here. Pick whatever feels closest to true right now, and we'll take you somewhere that might help.</p>
 
-      <div class="mood-grid" role="group" aria-label="Choose what you're feeling" style="grid-template-columns: repeat(2, 1fr); max-width: 480px; gap: 40px; margin-top: 20px;">
+      <div class="mood-grid" role="group" aria-label="Choose what you're feeling" style="grid-template-columns: repeat(2, 1fr); max-width: 620px; gap: 28px; margin-top: 20px;">
         <a class="mood-card" href="living-room.html?emotion=Sad"><span class="mood-emoji" aria-hidden="true">😔</span>Sad</a>
         <a class="mood-card" href="garden.html?emotion=Anxious"><span class="mood-emoji" aria-hidden="true">😰</span>Anxious</a>
         <a class="mood-card" href="garden.html?emotion=Angry"><span class="mood-emoji" aria-hidden="true">😡</span>Angry</a>
         <a class="mood-card" href="attic.html?emotion=Lonely"><span class="mood-emoji" aria-hidden="true">🫂</span>Lonely</a>
+        <a class="mood-card" href="attic.html?emotion=Guilty"><span class="mood-emoji" aria-hidden="true">😣</span>Guilty</a>
+        <a class="mood-card" href="living-room.html?emotion=Grieving"><span class="mood-emoji" aria-hidden="true">🕊️</span>Grieving</a>
+        <a class="mood-card" href="attic.html?emotion=Empty"><span class="mood-emoji" aria-hidden="true">🫥</span>Numb</a>
+        <a class="mood-card" href="garden.html?emotion=Overwhelmed"><span class="mood-emoji" aria-hidden="true">🌊</span>Overwhelmed</a>
       </div>
 
       <button class="btn btn-secondary" id="dont-know-feeling" style="margin-top: 40px;">I don’t know what I’m feeling</button>
@@ -106,7 +111,7 @@
         <div class="chat-log" id="nightstand-chat-log"></div>
         <div class="typing-indicator hidden" id="nightstand-typing"><span></span><span></span><span></span></div>
         <div style="display:flex; gap:10px; margin-top:10px;">
-          <input class="text-input" id="nightstand-chat-input" placeholder="Type whatever is keeping you awake…" style="flex:1;">
+          <input class="text-input" id="nightstand-chat-input" data-mic placeholder="Type whatever is keeping you awake…" style="flex:1;">
           <button class="btn btn-primary" id="nightstand-chat-send">Send</button>
         </div>
         <div style="display:flex; justify-content:space-between; align-items:center; margin-top:14px;">

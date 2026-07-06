@@ -905,24 +905,48 @@ textarea:focus-visible, select:focus-visible, [tabindex]:focus-visible {
   opacity: 0.03 !important;
 }
 
-/* 3. Living World: Season Styles & Accents */
-[data-season="spring"] {
+/* 3. Living World: Season Styles & Accents
+   Scoped to [data-theme="day"] specifically. Season and day/night theme are
+   independent dimensions that can both be active at once (e.g. monsoon at
+   night); without this scoping, a season rule and the night theme rule both
+   have equal specificity and whichever comes later in the stylesheet wins
+   outright, silently overriding the night palette's dark background with a
+   daytime-light one while the text stays night-mode pale, killing contrast. */
+[data-theme="day"][data-season="spring"] {
   --green: #82a86b;
   --teal: #507e8b;
 }
-[data-season="monsoon"] {
+[data-theme="day"][data-season="monsoon"] {
   --parchment: #E6E8EA;
   --parchment-deep: #D5D8DC;
   --teal: #4b6f7a;
 }
-[data-season="autumn"] {
+[data-theme="day"][data-season="autumn"] {
   --rust: #A05C45;
   --gold: #A98548;
 }
-[data-season="winter"] {
+[data-theme="day"][data-season="winter"] {
   --parchment: #EFF2F5;
   --teal: #788a9c;
   --blue: #2F4F4F;
+}
+
+/* Night-time season accents: shift accent colors only, never parchment/ink/
+   surface, so the night palette's contrast is never compromised. */
+[data-theme="night"][data-season="spring"] {
+  --green: #6f9c68;
+  --teal: #3f7a86;
+}
+[data-theme="night"][data-season="monsoon"] {
+  --teal: #4a7986;
+}
+[data-theme="night"][data-season="autumn"] {
+  --rust: #c9704f;
+  --gold: #b8925a;
+}
+[data-theme="night"][data-season="winter"] {
+  --teal: #6f8aa0;
+  --blue: #37506b;
 }
 
 /* Weather Overlays */
@@ -934,7 +958,10 @@ textarea:focus-visible, select:focus-visible, [tabindex]:focus-visible {
   overflow: hidden;
 }
 .weather-particle {
-  display: none !important;
+  position: absolute;
+  opacity: var(--p-op, 0.5);
+  animation: fall var(--p-dur, 10s) linear infinite;
+  will-change: transform;
 }
 @keyframes fall {
   0% { transform: translateY(-20px) translateX(0) rotate(0deg); }
@@ -996,6 +1023,40 @@ textarea:focus-visible, select:focus-visible, [tabindex]:focus-visible {
 @keyframes sway {
   0% { transform: rotate(-2deg); }
   100% { transform: rotate(2deg); }
+}
+
+/* Garden fireflies: purely decorative, ambient motion */
+.firefly-field {
+  position: relative;
+  width: 100%;
+  max-width: 480px;
+  height: 40px;
+  margin: 0 auto;
+  pointer-events: none;
+}
+.firefly {
+  position: absolute;
+  bottom: 0;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--gold);
+  box-shadow: 0 0 8px 2px var(--gold);
+  opacity: 0;
+  animation: firefly-drift var(--f-dur, 9s) ease-in-out infinite;
+  animation-delay: var(--f-delay, 0s);
+  left: var(--f-x, 50%);
+}
+@keyframes firefly-drift {
+  0%   { opacity: 0; transform: translate(0, 0) scale(0.8); }
+  15%  { opacity: 0.9; }
+  50%  { opacity: 0.5; transform: translate(var(--f-dx, 20px), -60px) scale(1.1); }
+  85%  { opacity: 0.9; }
+  100% { opacity: 0; transform: translate(calc(var(--f-dx, 20px) * -1), -110px) scale(0.7); }
+}
+.freeze-bg .firefly,
+.no-animations .firefly {
+  animation-play-state: paused !important;
 }
 
 /* Attic Moonlight and Dust */
@@ -1438,5 +1499,34 @@ textarea:focus-visible, select:focus-visible, [tabindex]:focus-visible {
   .brand {
     font-size: 1.25rem;
   }
+}
+
+/* ============ Speech to text ============ */
+.mic-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--ink-soft);
+  font-size: 1.1rem;
+  margin: 8px 0 0 0;
+  flex-shrink: 0;
+  transition: transform 0.2s var(--ease), border-color 0.2s, color 0.2s, background 0.2s;
+}
+.mic-btn:hover:not(:disabled) { border-color: var(--rust); color: var(--rust); transform: translateY(-2px); }
+.mic-btn.is-listening {
+  background: var(--rust);
+  color: #fff9f2;
+  border-color: var(--rust);
+  animation: mic-pulse 1.4s ease-in-out infinite;
+}
+@keyframes mic-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(160, 71, 60, 0.5); }
+  50% { box-shadow: 0 0 0 8px rgba(160, 71, 60, 0); }
 }
 

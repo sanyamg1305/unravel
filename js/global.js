@@ -364,6 +364,72 @@
     });
   }
 
+  /* ============ Speech to text ============ */
+  // Any <input> or <textarea> marked data-mic gets a small microphone button
+  // inserted right after it, powered by the Web Speech API. Nothing is ever
+  // recorded or sent anywhere; the browser does the transcription locally.
+  function initSpeechToText() {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+    $$('[data-mic]').forEach(field => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'mic-btn';
+      btn.setAttribute('aria-pressed', 'false');
+      btn.setAttribute('aria-label', 'Speak instead of typing');
+      btn.textContent = '🎤';
+      field.insertAdjacentElement('afterend', btn);
+
+      if (!SpeechRecognition) {
+        btn.disabled = true;
+        btn.title = 'Voice input is not supported in this browser';
+        btn.style.opacity = '0.4';
+        return;
+      }
+
+      let recognizing = false;
+      let recognition = null;
+
+      btn.addEventListener('click', () => {
+        if (recognizing) { recognition.stop(); return; }
+
+        recognition = new SpeechRecognition();
+        recognition.lang = 'en-US';
+        recognition.interimResults = true;
+        recognition.continuous = true;
+        let finalTranscript = field.value ? field.value.replace(/\s+$/, '') + ' ' : '';
+
+        recognition.onstart = () => {
+          recognizing = true;
+          btn.classList.add('is-listening');
+          btn.textContent = '⏹';
+          btn.setAttribute('aria-pressed', 'true');
+          btn.setAttribute('aria-label', 'Stop voice input');
+        };
+        recognition.onresult = (e) => {
+          let interim = '';
+          for (let i = e.resultIndex; i < e.results.length; i++) {
+            const transcript = e.results[i][0].transcript;
+            if (e.results[i].isFinal) finalTranscript += transcript + ' ';
+            else interim += transcript;
+          }
+          field.value = finalTranscript + interim;
+          field.dispatchEvent(new Event('input', { bubbles: true }));
+        };
+        const stop = () => {
+          recognizing = false;
+          btn.classList.remove('is-listening');
+          btn.textContent = '🎤';
+          btn.setAttribute('aria-pressed', 'false');
+          btn.setAttribute('aria-label', 'Speak instead of typing');
+        };
+        recognition.onerror = stop;
+        recognition.onend = stop;
+        recognition.start();
+      });
+    });
+  }
+
   /* ============ Page Init ============ */
   document.addEventListener('DOMContentLoaded', () => {
     applyThermostatClasses();
@@ -372,6 +438,7 @@
     initQuickExit();
     buildWelcomeMat();
     checkAndRestoreDraft();
+    initSpeechToText();
   });
 
   window.Sukoon.isNightHours = function() {

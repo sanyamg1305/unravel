@@ -56,6 +56,10 @@
           <circle cx="25" cy="35" r="20" fill="var(--green)" opacity="0.85"></circle>
         </svg>
       </div>
+
+      <div class="firefly-field" aria-hidden="true" id="firefly-field"></div>
+
+      <button class="btn btn-secondary" id="companion-open" style="margin-top: 24px;">💬 Talk it through with a companion</button>
     </div>
 
     <!-- Companion Space -->
@@ -65,7 +69,7 @@
         <div class="chat-log" id="companion-chat-log"></div>
         <div class="typing-indicator hidden" id="companion-typing"><span></span><span></span><span></span></div>
         <div style="display:flex; gap:10px; margin-top:10px;">
-          <input class="text-input" id="companion-input" placeholder="Type whatever is in your head right now…" style="flex:1;">
+          <input class="text-input" id="companion-input" data-mic placeholder="Type whatever is in your head right now…" style="flex:1;">
           <button class="btn btn-primary" id="companion-send">Send</button>
         </div>
         <div style="display:flex; justify-content:space-between; align-items:center; margin-top:14px;">
@@ -101,15 +105,34 @@
       </div>
     </div>
 
-    <div class="wrap wrap-narrow" style="margin-top: 40px;">
-      <div class="card reset-circle-wrap" id="reset-circle" style="text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 48px;">
-        <h2 class="display-sm" style="font-size:1.4rem; margin-bottom: 24px;">60-Second Reset</h2>
-        <svg class="reset-circle-svg" width="220" height="220" viewBox="0 0 220 220" role="img" aria-label="A slow, expanding and contracting circle guiding you to breathe in, hold, and breathe out" style="margin: 0 auto 20px;">
-          <circle cx="110" cy="110" r="90" fill="none" stroke="var(--line)" stroke-width="2"></circle>
-          <circle class="pulse" cx="110" cy="110" r="40" fill="var(--rust)" opacity="0.45"></circle>
-        </svg>
-        <p class="reset-word" id="reset-word" aria-live="polite" style="font-size:1.15rem; font-weight:600; margin-bottom:20px; color:var(--ink-soft);">Breathe in…</p>
-        <button class="btn btn-secondary" id="reset-toggle">Pause</button>
+    <div class="wrap" style="margin-top: 40px;">
+      <div class="garden-grid">
+        <div class="card reset-circle-wrap" id="reset-circle" style="text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 48px;">
+          <h2 class="display-sm" style="font-size:1.4rem; margin-bottom: 24px;">60-Second Reset</h2>
+          <svg class="reset-circle-svg" width="220" height="220" viewBox="0 0 220 220" role="img" aria-label="A slow, expanding and contracting circle guiding you to breathe in, hold, and breathe out" style="margin: 0 auto 20px;">
+            <circle cx="110" cy="110" r="90" fill="none" stroke="var(--line)" stroke-width="2"></circle>
+            <circle class="pulse" cx="110" cy="110" r="40" fill="var(--rust)" opacity="0.45"></circle>
+          </svg>
+          <p class="reset-word" id="reset-word" aria-live="polite" style="font-size:1.15rem; font-weight:600; margin-bottom:20px; color:var(--ink-soft);">Breathe in…</p>
+          <button class="btn btn-secondary" id="reset-toggle">Pause</button>
+        </div>
+
+        <div class="card sound-window" id="sound-window">
+          <h2 class="display-sm" style="font-size:1.4rem;">Sound Window</h2>
+          <p class="lede lede-sm">Gentle, loopable ambience, synthesized right in your browser. Nothing is recorded, nothing plays until you choose it.</p>
+          <div class="sound-track">
+            <span>🌧️ Rain against a window</span>
+            <button aria-label="Play rain sound" data-track="rain">▶</button>
+          </div>
+          <div class="sound-track">
+            <span>🐦 Birdsong in the garden</span>
+            <button aria-label="Play birdsong sound" data-track="birdsong">▶</button>
+          </div>
+          <div class="sound-track">
+            <span>🎐 Soft wind chimes</span>
+            <button aria-label="Play wind chimes sound" data-track="chimes">▶</button>
+          </div>
+        </div>
       </div>
     </div>
   </section>
