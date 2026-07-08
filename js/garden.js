@@ -3,6 +3,53 @@
   const $ = (sel, root = document) => root.querySelector(sel);
   const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
 
+  /* ============ Breath cue tones (rise on inhale, chime on hold, fall on exhale) ============ */
+  let breathCtx = null;
+  function ensureBreathCtx() {
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    if (!AudioCtx) return null;
+    if (!breathCtx) breathCtx = new AudioCtx();
+    if (breathCtx.state === 'suspended') breathCtx.resume().catch(() => {});
+    return breathCtx;
+  }
+
+  function playBreathCue(phase) {
+    if (localStorage.getItem('thermostat_mute_audio') === 'true') return;
+    const ctx = ensureBreathCtx();
+    if (!ctx || ctx.state !== 'running') return; // not yet unlocked by a user gesture
+
+    const now = ctx.currentTime;
+    const gain = ctx.createGain();
+    gain.gain.setValueAtTime(0.0001, now);
+    gain.connect(ctx.destination);
+
+    const osc = ctx.createOscillator();
+    osc.type = 'sine';
+    osc.connect(gain);
+
+    if (phase === 'in') {
+      osc.frequency.setValueAtTime(220, now);
+      osc.frequency.exponentialRampToValueAtTime(330, now + 3.6);
+      gain.gain.exponentialRampToValueAtTime(0.05, now + 0.7);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + 3.8);
+      osc.start(now);
+      osc.stop(now + 4);
+    } else if (phase === 'hold') {
+      osc.frequency.setValueAtTime(330, now);
+      gain.gain.exponentialRampToValueAtTime(0.025, now + 0.3);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + 1.3);
+      osc.start(now);
+      osc.stop(now + 1.4);
+    } else if (phase === 'out') {
+      osc.frequency.setValueAtTime(330, now);
+      osc.frequency.exponentialRampToValueAtTime(196, now + 7.4);
+      gain.gain.exponentialRampToValueAtTime(0.05, now + 0.7);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + 7.8);
+      osc.start(now);
+      osc.stop(now + 8);
+    }
+  }
+
   /* ============ 60-Second Reset (4-7-8 breathing) ============ */
   function initResetCircle() {
     const word = $('#reset-word');
@@ -11,20 +58,25 @@
     if (!word || !pulse || !toggleBtn) return;
 
     const cycle = [
-      { label: 'Breathe in…', at: 0 },
-      { label: 'Hold…', at: 4000 },
-      { label: 'Breathe out…', at: 11000 },
+      { label: 'Breathe in…', at: 0, phase: 'in' },
+      { label: 'Hold…', at: 4000, phase: 'hold' },
+      { label: 'Breathe out…', at: 11000, phase: 'out' },
     ];
     const totalMs = 19000;
     let startedAt = performance.now();
     let paused = false;
     let raf;
+    let lastPhase = null;
 
     function tick(now) {
       if (!paused) {
         const elapsed = (now - startedAt) % totalMs;
         const step = cycle.slice().reverse().find(c => elapsed >= c.at);
         if (word.textContent !== step.label) word.textContent = step.label;
+        if (lastPhase !== step.phase) {
+          lastPhase = step.phase;
+          playBreathCue(step.phase);
+        }
       }
       raf = requestAnimationFrame(tick);
     }
@@ -34,6 +86,7 @@
       paused = !paused;
       pulse.style.animationPlayState = paused ? 'paused' : 'running';
       toggleBtn.textContent = paused ? 'Resume' : 'Pause';
+      ensureBreathCtx();
     });
   }
 
