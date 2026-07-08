@@ -255,9 +255,17 @@
   }
 
   /* ============ Onboarding promises ============ */
+  // buildWelcomeMat and checkAndRestoreDraft both show a full-screen overlay.
+  // If both fired independently, they'd stack: dismissing the top one would
+  // silently reveal the other underneath, which read as the popup being
+  // "stuck" (the page never actually became interactive). onDismiss chains
+  // them so only ever one overlay is shown at a time.
   const WELCOME_KEY = 'sukoon_welcome_seen';
-  function buildWelcomeMat() {
-    if (localStorage.getItem(WELCOME_KEY)) return;
+  function buildWelcomeMat(onDismiss) {
+    if (localStorage.getItem(WELCOME_KEY)) {
+      if (onDismiss) onDismiss();
+      return;
+    }
     if ($('#welcome-mat-overlay')) return;
 
     const overlay = document.createElement('div');
@@ -282,11 +290,16 @@
     `;
     document.body.appendChild(overlay);
 
+    function dismiss() {
+      overlay.remove();
+      if (onDismiss) onDismiss();
+    }
+
     $('#welcome-mat-accept').addEventListener('click', () => {
       localStorage.setItem(WELCOME_KEY, '1');
-      overlay.remove();
+      dismiss();
     });
-    $('#welcome-mat-tour').addEventListener('click', () => showGentleGuide(overlay));
+    $('#welcome-mat-tour').addEventListener('click', () => showGentleGuide(overlay, dismiss));
   }
 
   const TOUR_STEPS = [
@@ -295,7 +308,7 @@
     { title: 'Always within reach', body: 'The porch light in the corner leads to professional support. The exit button slips you out instantly if you need to go.' }
   ];
 
-  function showGentleGuide(overlay) {
+  function showGentleGuide(overlay, dismiss) {
     let step = 0;
     const card = overlay.querySelector('.welcome-mat-card');
     function render() {
@@ -311,7 +324,7 @@
       `;
       $('#tour-next', card).addEventListener('click', () => {
         if (step < TOUR_STEPS.length - 1) { step += 1; render(); }
-        else { localStorage.setItem(WELCOME_KEY, '1'); overlay.remove(); }
+        else { localStorage.setItem(WELCOME_KEY, '1'); dismiss(); }
       });
     }
     render();
@@ -430,15 +443,38 @@
     });
   }
 
+  /* ============ Live usage ticker (dummy, deterministic, no server) ============ */
+  function initUsageTicker() {
+    if ($('#usage-ticker')) return;
+    const badge = document.createElement('div');
+    badge.className = 'usage-ticker';
+    badge.id = 'usage-ticker';
+    badge.innerHTML = '<span class="dot" aria-hidden="true"></span><span id="usage-ticker-count">0</span> people have found a moment of calm here';
+    document.body.appendChild(badge);
+
+    const EPOCH = Date.UTC(2026, 0, 1); // fixed reference point, not a real launch date
+    const BASE_COUNT = 148300; // dummy starting figure
+    const GROWTH_PER_SECOND = 0.35; // dummy growth rate, purely cosmetic
+
+    const countEl = $('#usage-ticker-count', badge);
+    function render() {
+      const elapsedSeconds = Math.max(0, (Date.now() - EPOCH) / 1000);
+      const count = Math.floor(BASE_COUNT + elapsedSeconds * GROWTH_PER_SECOND);
+      countEl.textContent = count.toLocaleString('en-US');
+    }
+    render();
+    setInterval(render, 4000);
+  }
+
   /* ============ Page Init ============ */
   document.addEventListener('DOMContentLoaded', () => {
     applyThermostatClasses();
     applyLivingWorld();
     injectThermostat();
     initQuickExit();
-    buildWelcomeMat();
-    checkAndRestoreDraft();
+    buildWelcomeMat(checkAndRestoreDraft);
     initSpeechToText();
+    initUsageTicker();
   });
 
   window.Sukoon.isNightHours = function() {

@@ -34,6 +34,7 @@
       numbers: [
         { label: 'Call 14416', sub: 'Tele-MANAS (India)', href: 'tel:14416' },
         { label: 'Call 9152987821', sub: 'iCall Helpline', href: 'tel:+919152987821' },
+        { label: 'Call 99996 66555', sub: 'Vandrevala Foundation Helpline', href: 'tel:+919999666555' },
         { label: 'Call 112', sub: 'Immediate danger', href: 'tel:112' },
       ],
     },
