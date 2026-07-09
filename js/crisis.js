@@ -72,5 +72,76 @@
     }
   }
 
-  document.addEventListener('DOMContentLoaded', render);
+  // Breathing pacer tone, synced to the .pacer-static CSS animation (12s:
+  // 6s expanding/inhale, 6s contracting/exhale). Kept self-contained (no
+  // global.js) since this page is deliberately dependency-free for speed.
+  let pacerAudioCtx = null;
+  function ensurePacerAudioCtx() {
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    if (!AudioCtx) return null;
+    if (!pacerAudioCtx) pacerAudioCtx = new AudioCtx();
+    if (pacerAudioCtx.state === 'suspended') pacerAudioCtx.resume().catch(() => {});
+    return pacerAudioCtx;
+  }
+
+  function playPacerTone(rising) {
+    if (localStorage.getItem('thermostat_mute_audio') === 'true') return;
+    const ctx = ensurePacerAudioCtx();
+    if (!ctx || ctx.state !== 'running') return; // not yet unlocked by a user gesture
+
+    const now = ctx.currentTime;
+    const gain = ctx.createGain();
+    gain.gain.setValueAtTime(0.0001, now);
+    gain.connect(ctx.destination);
+
+    const osc = ctx.createOscillator();
+    osc.type = 'sine';
+    osc.connect(gain);
+
+    if (rising) {
+      osc.frequency.setValueAtTime(220, now);
+      osc.frequency.exponentialRampToValueAtTime(330, now + 5.4);
+    } else {
+      osc.frequency.setValueAtTime(330, now);
+      osc.frequency.exponentialRampToValueAtTime(196, now + 5.4);
+    }
+    gain.gain.exponentialRampToValueAtTime(0.045, now + 0.8);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + 5.8);
+    osc.start(now);
+    osc.stop(now + 6);
+  }
+
+  function initBreathPacer() {
+    if (!document.querySelector('.pacer-static')) return;
+    const word = document.getElementById('pacer-word');
+
+    let unlocked = false;
+    function unlock() {
+      if (unlocked) return;
+      unlocked = true;
+      ensurePacerAudioCtx();
+    }
+    document.addEventListener('pointerdown', unlock, { once: true });
+    document.addEventListener('keydown', unlock, { once: true });
+
+    const CYCLE_MS = 12000;
+    const HALF_MS = 6000;
+    let lastHalf = null;
+    function tick(now) {
+      const elapsed = now % CYCLE_MS;
+      const half = elapsed < HALF_MS ? 'in' : 'out';
+      if (half !== lastHalf) {
+        lastHalf = half;
+        playPacerTone(half === 'in');
+        if (word) word.textContent = half === 'in' ? 'Breathe in…' : 'Breathe out…';
+      }
+      requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    render();
+    initBreathPacer();
+  });
 })();
