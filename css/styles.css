@@ -498,32 +498,6 @@ textarea:focus-visible, select:focus-visible, [tabindex]:focus-visible {
 }
 @keyframes pulse-dot { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
 
-.usage-ticker {
-  position: fixed;
-  top: 90px;
-  right: 24px;
-  z-index: 30;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: 999px;
-  padding: 8px 16px;
-  font-size: 0.8rem;
-  color: var(--ink-soft);
-  box-shadow: var(--shadow-lift);
-  max-width: calc(100vw - 48px);
-}
-.usage-ticker .dot {
-  width: 8px; height: 8px; border-radius: 50%; background: var(--green);
-  flex-shrink: 0;
-  animation: pulse-dot 2s ease-in-out infinite;
-}
-.usage-ticker #usage-ticker-count { font-weight: 700; color: var(--ink); }
-@media (max-width: 640px) {
-  .usage-ticker { top: auto; bottom: 80px; right: 14px; font-size: 0.72rem; padding: 6px 12px; }
-}
 
 /* ============ Garden ============ */
 .garden-grid {

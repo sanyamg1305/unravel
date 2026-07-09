@@ -513,29 +513,6 @@
     requestAnimationFrame(tick);
   }
 
-  /* ============ Live usage ticker (dummy, deterministic, no server) ============ */
-  function initUsageTicker() {
-    if ($('#usage-ticker')) return;
-    const badge = document.createElement('div');
-    badge.className = 'usage-ticker';
-    badge.id = 'usage-ticker';
-    badge.innerHTML = '<span class="dot" aria-hidden="true"></span><span id="usage-ticker-count">0</span> people have found a moment of calm here';
-    document.body.appendChild(badge);
-
-    const EPOCH = Date.UTC(2026, 0, 1); // fixed reference point, not a real launch date
-    const BASE_COUNT = 148300; // dummy starting figure
-    const GROWTH_PER_SECOND = 0.35; // dummy growth rate, purely cosmetic
-
-    const countEl = $('#usage-ticker-count', badge);
-    function render() {
-      const elapsedSeconds = Math.max(0, (Date.now() - EPOCH) / 1000);
-      const count = Math.floor(BASE_COUNT + elapsedSeconds * GROWTH_PER_SECOND);
-      countEl.textContent = count.toLocaleString('en-US');
-    }
-    render();
-    setInterval(render, 4000);
-  }
-
   /* ============ Page Init ============ */
   document.addEventListener('DOMContentLoaded', () => {
     applyThermostatClasses();
@@ -544,7 +521,6 @@
     initQuickExit();
     buildWelcomeMat(checkAndRestoreDraft);
     initSpeechToText();
-    initUsageTicker();
     initBreathPacers();
   });
 
